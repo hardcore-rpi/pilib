@@ -1,0 +1,16 @@
+{
+  "name": "pilib-capturer",
+  "version": "0.0.1",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "nodemon -e ts --watch lib lib/index.ts",
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "uglify": "find dist -name *.js -exec terser --config-file minify.json -o {} {} \\;",
+    "build": "rm -rf dist && tsc -p tsconfig.json --outDir dist && npm run uglify"
+  },
+  "dependencies": {
+    "opencv4nodejs": "^5.6.0"
+  }
+}
