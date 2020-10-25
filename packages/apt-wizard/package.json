@@ -19,6 +19,7 @@
     "@rollup/plugin-commonjs": "^15.1.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
+    "@rollup/plugin-typescript": "^6.0.0",
     "@types/inquirer": "^7.3.1",
     "@types/jest": "^26.0.15",
     "builtin-modules": "^3.1.0",
@@ -44,5 +45,5 @@
       "node"
     ]
   },
-  "gitHead": "ab65af797b9937484340fbfe5658fea4296b543f"
+  "gitHead": "09a3957305435c342af98dee2b37ba690b024efc"
 }
