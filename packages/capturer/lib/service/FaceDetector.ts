@@ -22,7 +22,7 @@ export class FaceDetector extends BaseService {
     console.log(detections);
 
     const faces = await Promise.all(
-      detections.objects.map(async (r, i) => {
+      detections.objects.map(async r => {
         const _mat = this.img.getRegion(r);
         const _grayMat = grayImg.getRegion(r);
 
