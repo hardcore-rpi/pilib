@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "nodemon -e ts --watch lib lib/index.ts",
     "uglify": "find dist -name *.js -exec terser --config-file minify.json -o {} {} \\;",
-    "build": "rm -rf dist && tsc -p tsconfig.json --outDir dist && npm run uglify"
+    "build": "rm -rf dist && tsc -p tsconfig.json --outDir dist && npm run uglify",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "opencv4nodejs": "^5.6.0"
