@@ -27,7 +27,8 @@
     "rollup": "^2.32.1",
     "rollup-plugin-terser": "^7.0.2",
     "ts-jest": "^26.4.1",
-    "ts-node": "^9.0.0"
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.3"
   },
   "jest": {
     "transform": {
@@ -42,5 +43,6 @@
       "json",
       "node"
     ]
-  }
+  },
+  "gitHead": "ab65af797b9937484340fbfe5658fea4296b543f"
 }
