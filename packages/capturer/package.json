@@ -1,6 +1,6 @@
 {
   "name": "pilib-capturer",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "bin": "dist/run.js",
   "files": [
     "dist"
