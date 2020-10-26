@@ -19,8 +19,6 @@ export class FaceDetector extends BaseService {
     const detections = await this.classifier.detectMultiScaleAsync(grayImg);
     const count = detections.objects.length;
 
-    console.log(detections);
-
     const faces = await Promise.all(
       detections.objects.map(async r => {
         const _mat = this.img.getRegion(r);
