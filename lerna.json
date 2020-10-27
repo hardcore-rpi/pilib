@@ -1,7 +1,6 @@
 {
-  "packages": [
-    "packages/*"
-  ],
+  "packages": ["packages/*"],
   "version": "0.0.10",
-  "npmClient": "cnpm"
+  "npmClient": "cnpm",
+  "independent": true
 }
