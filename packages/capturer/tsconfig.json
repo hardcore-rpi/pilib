@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "ES2017",
     "module": "commonjs",
     "strict": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "esModuleInterop": true
   },
   "include": ["lib"]
 }

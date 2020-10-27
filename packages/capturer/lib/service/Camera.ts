@@ -33,6 +33,6 @@ export class Camera extends BaseService {
 
   async release() {
     this.cam.release();
-    this.logger.info('camera released');
+    this.logger.info('released');
   }
 }

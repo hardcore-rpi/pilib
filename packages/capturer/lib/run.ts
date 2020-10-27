@@ -7,6 +7,12 @@ import { Camera, FaceDetector, Uploader } from './service';
 const logger = new Logger('App');
 
 async function run() {
+  let exitFlag = false;
+
+  // 监听 ctrl-c 退出
+  process.on('SIGINT', () => (exitFlag = true));
+  process.on('SIGABRT', () => (exitFlag = true));
+
   const config = new Config();
   logger.info(`config: ${config.toLogStr()}`);
 
@@ -25,7 +31,7 @@ async function run() {
   let lastFaceCnt = 0;
 
   // 循环检测
-  while (1) {
+  while (!exitFlag) {
     try {
       const snapshot = await cam.read();
       await detector.setImg(snapshot.mat);
@@ -52,10 +58,15 @@ async function run() {
     }
   }
 
-  await Promise.all(sevList.map(s => s.init()));
+  await Promise.all(sevList.map(s => s.release()));
 }
 
-run().catch(e => {
-  logger.error('crashed:' + e);
-  process.exit(1);
-});
+run()
+  .then(() => {
+    logger.info('exit successfully');
+    process.exit(0);
+  })
+  .catch(e => {
+    logger.error('crashed:' + e);
+    process.exit(1);
+  });

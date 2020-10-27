@@ -10,7 +10,11 @@ export class FaceDetector extends BaseService {
   }
 
   async init() {}
-  async release() {}
+
+  async release() {
+    this.img?.release();
+    this.logger.info('released');
+  }
 
   async detectAllFaces() {
     // 图片灰化
