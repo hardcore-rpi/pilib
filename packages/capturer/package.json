@@ -6,17 +6,22 @@
     "dist"
   ],
   "scripts": {
-    "dev": "nodemon -e ts --watch lib lib/run.ts",
+    "dev": "nodemon -e ts --watch app app/index.ts",
     "uglify": "find dist -name *.js -exec terser --config-file minify.json -o {} {} \\;",
     "build": "rm -rf dist && tsc -p tsconfig.json --outDir dist",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "dayjs": "^1.9.4",
+    "jsonschema": "^1.4.0",
+    "koa": "^2.13.0",
+    "koa-router": "^9.4.0",
     "opencv4nodejs": "^5.6.0",
     "urllib": "^2.36.1"
   },
   "devDependencies": {
+    "@types/koa": "^2.11.6",
+    "@types/koa-router": "^7.4.1",
     "@types/node": "^14.11.10",
     "lerna": "^3.22.1",
     "nodemon": "^2.0.5",
