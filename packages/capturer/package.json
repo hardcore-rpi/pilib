@@ -24,5 +24,8 @@
     "ts-node": "^9.0.0",
     "typescript": "^4.0.3"
   },
+  "opencv4nodejs": {
+    "autoBuildWithoutContrib": 1
+  },
   "gitHead": "aa02feb653c87a7da4c30e99bddd72183ed15932"
 }
