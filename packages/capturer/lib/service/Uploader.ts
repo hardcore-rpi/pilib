@@ -31,12 +31,14 @@ export class Uploader extends BaseService {
   private async saveToRemote(snapshot: Snapshot) {
     const { buf, fileExt } = await snapshot.toBuf();
 
+    const upload_time = snapshot.timestampStr;
+
     const data = {
       path: '/snapshot',
       method: 'POST',
       data: {
         camera_id: snapshot.extra.cameraName,
-        upload_time: snapshot.extra.timestamp.valueOf(),
+        upload_time,
         file: {
           content: buf.toString('base64'),
           filename: `snapshot-${snapshot.extra.timestamp.valueOf()}.${fileExt}`,
@@ -46,16 +48,25 @@ export class Uploader extends BaseService {
 
     // 不用等待 promise 结束
     urllib
-      .curl(this.endpoint, { method: 'POST', contentType: 'json', data, timeout: 5000 })
+      .curl(this.endpoint, {
+        method: 'POST',
+        dataType: 'json',
+        contentType: 'json',
+        data,
+        timeout: 5000,
+      })
       .then(r => {
         if (r.status !== 200) throw new Error(`${r.status}: ${JSON.stringify(r.data)}`);
-        this.logger.info(`save remote ${this.endpoint} ${data.data.file.filename}`);
+        if (r.data.status !== 200)
+          throw new Error(`${r.data.status}: ${JSON.stringify(r.data.data)}`);
+
+        this.logger.info(
+          `save remote ${data.data.camera_id} ${upload_time} ${data.data.file.filename}`
+        );
       })
       .catch(err => {
         this.logger.error(err.message || err);
       });
-
-    this.logger.info(`saving remote ${this.endpoint} ${data.data.file.filename}`);
   }
 
   async upload(snapshot: Snapshot) {

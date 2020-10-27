@@ -1,4 +1,5 @@
 import * as cv from 'opencv4nodejs';
+import * as dayjs from 'dayjs';
 
 export class Snapshot {
   constructor(
@@ -15,6 +16,10 @@ export class Snapshot {
     const fileExt = 'png';
     const buf = await cv.imencodeAsync('.' + fileExt, this.mat);
     return { fileExt, buf };
+  }
+
+  get timestampStr() {
+    return dayjs(this.extra.timestamp).format('YYYY-MM-DD HH:mm:ss');
   }
 
   release() {
