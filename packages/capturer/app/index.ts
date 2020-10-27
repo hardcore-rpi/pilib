@@ -62,10 +62,6 @@ async function run() {
   // 定时器
   startSchedule(app);
 
-  // const cleanUp = async () => {
-  //   await Promise.all(Object.values(app.service).map(async s => s.release()));
-  // };
-
   // 启动监听
   app.listen(app.config.LOCAL_PORT);
 }
