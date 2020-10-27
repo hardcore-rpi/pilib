@@ -5,6 +5,7 @@ export class Config {
   readonly CAMERA_HEIGHT: number = +(process.env.CAMERA_HEIGHT || '240');
   readonly UPLOAD_ENDPOINT: string = process.env.UPLOAD_ENDPOINT || './output/';
   readonly LOCAL_PORT: number = +(process.env.LOCAL_PORT || 10001);
+  readonly LIVE_REFRESH_INTERVAL: number = +(process.env.LIVE_REFRESH_INTERVAL || '0.5');
 
   toLogStr() {
     return Object.entries(this)

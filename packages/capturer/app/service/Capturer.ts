@@ -1,3 +1,4 @@
+import { Snapshot } from '../Snapshot';
 import { BaseService } from './BaseService';
 
 declare module 'koa' {
@@ -6,15 +7,24 @@ declare module 'koa' {
   }
 }
 
+/** 人脸捕捉服务 */
 export class Capturer extends BaseService {
   private lastFaceCnt = 0;
 
   async init() {}
-  async release() {}
+  async release() {
+    this.currentSnapshot?.release();
+  }
+
+  public currentSnapshot?: Snapshot;
 
   async update() {
     try {
       const snapshot = await this.service.camera.read();
+
+      this.currentSnapshot?.release();
+      this.currentSnapshot = snapshot;
+
       await this.service.faceDetector.setImg(snapshot.mat);
 
       const { count: faceCount } = await this.service.faceDetector.detectAllFaces();
@@ -28,9 +38,6 @@ export class Capturer extends BaseService {
         this.logger.info(`faceCount ${this.lastFaceCnt} ${faceCount - this.lastFaceCnt}`);
         this.lastFaceCnt = faceCount;
       }
-
-      // clean
-      snapshot.release();
     } catch (e) {
       this.logger.error(e.message || e);
 

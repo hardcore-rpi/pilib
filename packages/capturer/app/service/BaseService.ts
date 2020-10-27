@@ -8,13 +8,13 @@ export abstract class BaseService {
   abstract init(): Promise<void>;
   abstract release(): Promise<void>;
 
-  get service() {
+  protected get service() {
     return this.app.service;
   }
 
-  get config() {
+  protected get config() {
     return this.app.config;
   }
 
-  logger: IApp['logger'] = this.app.logger.extend(this.name);
+  protected logger: IApp['logger'] = this.app.logger.extend(this.name);
 }
