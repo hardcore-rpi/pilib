@@ -1,6 +1,6 @@
 {
   "name": "pilib-apt-wizard",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "bin": {
     "apt-wizard": "./dist/apt-wizard.js"
   },
