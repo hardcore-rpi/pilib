@@ -5,7 +5,8 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "importHelpers": true
   },
-  "include": ["lib"]
+  "include": ["app"]
 }
