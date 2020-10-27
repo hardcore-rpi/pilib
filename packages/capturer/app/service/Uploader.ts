@@ -14,7 +14,7 @@ export class Uploader extends BaseService {
   async init() {}
   async release() {}
 
-  get endpoint() {
+  private get endpoint() {
     return this.config.UPLOAD_ENDPOINT;
   }
 
