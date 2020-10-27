@@ -1,8 +1,13 @@
 import * as cv from 'opencv4nodejs';
+import { Snapshot } from '../Snapshot';
 import { BaseService } from './BaseService';
 
 export class Camera extends BaseService {
-  constructor(readonly id: number, private extra: { width: number; height: number }) {
+  constructor(
+    readonly id: number,
+    readonly name: string,
+    private extra: { width: number; height: number }
+  ) {
     super();
   }
 
@@ -10,13 +15,20 @@ export class Camera extends BaseService {
 
   async init() {}
 
-  async read() {
-    let mat = await this.cam.readAsync();
+  async read(): Promise<Snapshot> {
+    const originMat = await this.cam.readAsync();
+    const resizeMat = await originMat.resizeAsync(this.extra.height, this.extra.width);
 
-    // 缩放
-    mat = await mat.resizeAsync(this.extra.height, this.extra.width);
+    // clean
+    originMat.release();
 
-    return { mat };
+    const snapshot = new Snapshot(resizeMat, {
+      timestamp: new Date(),
+      cameraId: this.id,
+      cameraName: this.name,
+    });
+
+    return snapshot;
   }
 
   async release() {

@@ -1,21 +1,21 @@
 export class Logger {
   constructor(readonly id: string) {}
 
-  private ft(msg: string) {
+  private ft(level: string, msg: string) {
     const timestamp = new Date().toLocaleString('zh-cn');
 
-    return this.id ? `[${timestamp}][${this.id}] ${msg}` : `[${timestamp}] ${msg}`;
+    return `[${timestamp}][${this.id}][${level}] ${msg}`;
   }
 
-  extend(id: string) {
-    return new Logger([this.id, id].join('.'));
+  extend(subId: string) {
+    return new Logger([this.id, subId].join('.'));
   }
 
   info(msg: string) {
-    console.info(this.ft(msg));
+    console.info(this.ft('INFO', msg));
   }
 
   error(msg: string) {
-    console.error(this.ft(msg));
+    console.error(this.ft('ERROR', msg));
   }
 }

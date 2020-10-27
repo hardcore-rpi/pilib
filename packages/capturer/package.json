@@ -12,7 +12,8 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "opencv4nodejs": "^5.6.0"
+    "opencv4nodejs": "^5.6.0",
+    "urllib": "^2.36.1"
   },
   "devDependencies": {
     "@types/node": "^14.11.10",

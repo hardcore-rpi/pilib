@@ -10,7 +10,7 @@ async function run() {
   const config = new Config();
   logger.info(`config: ${config.toLogStr()}`);
 
-  const cam = new Camera(config.CAMERA_ID, {
+  const cam = new Camera(config.CAMERA_ID, config.CAMERA_NAME, {
     height: config.CAMERA_HEIGHT,
     width: config.CAMERA_WIDTH,
   });
@@ -26,21 +26,30 @@ async function run() {
 
   // 循环检测
   while (1) {
-    const { mat } = await cam.read();
-    await detector.setImg(mat);
-    const { count: faceCount } = await detector.detectAllFaces();
+    try {
+      const snapshot = await cam.read();
+      await detector.setImg(snapshot.mat);
 
-    if (lastFaceCnt < faceCount) {
-      // 有人进入画面
-      logger.info(`somebody into view, ${faceCount - lastFaceCnt}`);
-      // 上传
-      const timestamp = new Date().valueOf();
-      await uploader.upload(timestamp + '.png', mat);
-    } else if (lastFaceCnt > faceCount) {
-      logger.info(`somebody leave view, ${faceCount - lastFaceCnt}`);
+      const { count: faceCount } = await detector.detectAllFaces();
+
+      if (lastFaceCnt < faceCount) {
+        // 有人进入画面，上传
+        await uploader.upload(snapshot);
+      }
+
+      if (faceCount !== lastFaceCnt) {
+        logger.info(`faceCount ${lastFaceCnt} ${faceCount - lastFaceCnt}`);
+        lastFaceCnt = faceCount;
+      }
+
+      // clean
+      snapshot.release();
+    } catch (e) {
+      logger.error(e.message || e);
+
+      // 重置，并继续执行
+      lastFaceCnt = 0;
     }
-
-    lastFaceCnt = faceCount;
   }
 
   await Promise.all(sevList.map(s => s.init()));
