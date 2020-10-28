@@ -4,10 +4,6 @@ import { liveMonitor, shot } from './controller';
 import { RefreshCapturer } from './RefreshCapturer';
 import { Camera, Capturer, FaceDetector, Uploader } from './service';
 
-declare module 'ah-server' {
-  interface IApplication extends CapturerApp {}
-}
-
 class CapturerApp extends App {
   service: IService = {
     camera: new Camera(this),
@@ -20,7 +16,7 @@ class CapturerApp extends App {
     refreshCapturer: new RefreshCapturer(this),
   };
 
-  async init() {
+  protected async init() {
     await super.init();
 
     // 路由表
