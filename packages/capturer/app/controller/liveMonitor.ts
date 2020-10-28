@@ -1,7 +1,7 @@
-import Koa from 'koa';
+import { Middleware } from 'koa';
 
-export const liveMonitor: Koa.Middleware = async ctx => {
-  const { currentSnapshot } = ctx.service.capturer;
+export const liveMonitor: Middleware = async ctx => {
+  const { currentSnapshot } = ctx.app.service.capturer;
   if (!currentSnapshot) return;
 
   const { buf } = await currentSnapshot.toBuf();

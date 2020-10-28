@@ -1,14 +1,14 @@
+import { Service } from 'ah-server';
 import { Snapshot } from '../Snapshot';
-import { BaseService } from './BaseService';
 
-declare module 'koa' {
+declare module 'ah-server' {
   interface IService {
     capturer: Capturer;
   }
 }
 
 /** 人脸捕捉服务 */
-export class Capturer extends BaseService {
+export class Capturer extends Service {
   private lastFaceCnt = 0;
 
   async init() {}

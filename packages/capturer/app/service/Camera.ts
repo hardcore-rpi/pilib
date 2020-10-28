@@ -1,14 +1,14 @@
+import { Service } from 'ah-server';
 import * as cv from 'opencv4nodejs';
 import { Snapshot } from '../Snapshot';
-import { BaseService } from './BaseService';
 
-declare module 'koa' {
+declare module 'ah-server' {
   interface IService {
     camera: Camera;
   }
 }
 
-export class Camera extends BaseService {
+export class Camera extends Service {
   private readonly cam = new cv.VideoCapture(this.config.CAMERA_ID);
 
   async init() {}

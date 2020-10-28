@@ -1,7 +1,7 @@
-import Koa from 'koa';
+import { Middleware } from 'koa';
 
 /** 触发拍照 */
-export const shot: Koa.Middleware = async ctx => {
+export const shot: Middleware = async ctx => {
   const query = ctx.validate<{ upload?: string }>(ctx.request.query, {
     type: 'object',
     properties: {

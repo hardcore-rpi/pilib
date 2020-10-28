@@ -1,13 +1,13 @@
+import { Service } from 'ah-server';
 import * as cv from 'opencv4nodejs';
-import { BaseService } from './BaseService';
 
-declare module 'koa' {
+declare module 'ah-server' {
   interface IService {
     faceDetector: FaceDetector;
   }
 }
 
-export class FaceDetector extends BaseService {
+export class FaceDetector extends Service {
   private img!: cv.Mat;
   private classifier = new cv.CascadeClassifier(cv.HAAR_FRONTALFACE_ALT2);
 

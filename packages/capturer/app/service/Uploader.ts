@@ -1,16 +1,15 @@
-import { BaseService } from './BaseService';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as urllib from 'urllib';
 import { Snapshot } from '../Snapshot';
+import { Service } from 'ah-server';
 
-declare module 'koa' {
+declare module 'ah-server' {
   interface IService {
     uploader: Uploader;
   }
 }
 
-export class Uploader extends BaseService {
+export class Uploader extends Service {
   async init() {}
   async release() {}
 
@@ -53,8 +52,8 @@ export class Uploader extends BaseService {
     };
 
     // 不用等待 promise 结束
-    urllib
-      .curl(this.endpoint, {
+    this.app
+      .curl<any>(this.endpoint, {
         method: 'POST',
         dataType: 'json',
         contentType: 'json',
