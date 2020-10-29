@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { App, IScheduler, IService } from 'ah-server';
 import { CapturerConfig } from './Config';
 import { liveMonitor, shot } from './controller';
