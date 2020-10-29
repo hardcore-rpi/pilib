@@ -16,4 +16,11 @@ pilib-capturer
 - `CAMERA_ID`: 摄像头输入编号，默认 0
 - `CAMERA_WIDTH`: 图像缩放宽度，默认 320
 - `CAMERA_HEIGHT`: 图像缩放高度，默认 240
-- `UPLOAD_ENDPOINT`: 抓拍上传地址
+- `UPLOAD_ENDPOINT`: 抓拍上传地址，默认当前路径 ./output
+- `LOCAL_PORT`: 本地 http 监听端口号，默认 10001
+- `LIVE_REFRESH_INTERVAL`: 监控刷新周期，默认 0.5s
+
+# HTTP API
+
+- `GET /live`: 实时监控
+- `GET /shot?upload=1`: 触发抓拍
