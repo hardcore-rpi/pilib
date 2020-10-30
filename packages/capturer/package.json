@@ -5,6 +5,7 @@
   "files": [
     "dist"
   ],
+  "homepage": "https://github.com/hardcore-rpi/pilib/tree/main/packages/capturer",
   "scripts": {
     "dev": "nodemon -e ts --watch app app/index.ts",
     "build": "rm -rf dist && tsc -p tsconfig.json --outDir dist",
