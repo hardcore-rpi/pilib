@@ -1,6 +1,6 @@
-![pilib](https://raw.githubusercontent.com/hardcore-rpi/pilib/main/doc/pilib.png)
-
 # 树莓派人脸识别库
+
+![pilib](https://raw.githubusercontent.com/hardcore-rpi/pilib/main/doc/pilib.png)
 
 人脸识别 + 抓拍 + 上传
 
@@ -26,4 +26,3 @@ pilib-capturer
 
 - `GET /live`: 实时监控
 - `GET /shot?upload=1`: 触发抓拍
-
