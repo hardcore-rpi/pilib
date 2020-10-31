@@ -1,6 +1,6 @@
 {
   "name": "pilib-capturer",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "树莓派人脸识别库",
   "bin": "dist/index.js",
   "files": [
