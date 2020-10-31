@@ -11,27 +11,20 @@ declare module 'ah-server' {
 export class Capturer extends Service {
   private lastFaceCnt = 0;
 
-  async init() {}
-  async release() {
-    this.currentSnapshot?.release();
-  }
-
-  public currentSnapshot?: Snapshot;
+  public snapshot?: Snapshot;
 
   async update() {
     try {
       const snapshot = await this.service.camera.read();
+      this.snapshot = snapshot;
 
-      this.currentSnapshot?.release();
-      this.currentSnapshot = snapshot;
-
-      await this.service.faceDetector.setImg(snapshot.mat);
-
-      const { count: faceCount } = await this.service.faceDetector.detectAllFaces();
+      const { detection } = await snapshot.detectAllFaces();
+      const faceCount = detection.objects.length;
 
       if (this.lastFaceCnt < faceCount) {
         // 有人进入画面，上传
-        await this.service.uploader.upload(snapshot);
+        const ds = await snapshot.copy({ markAllFaces: true });
+        await this.service.uploader.upload(ds);
       }
 
       if (faceCount !== this.lastFaceCnt) {
