@@ -14,8 +14,12 @@ export class Capturer extends Service {
 
   // 一阶滤波系数
   // 系数越小，滤波结果越平稳，但是灵敏度越低；滤波系数越大，灵敏度越高，但是滤波结果越不稳定
-  private readonly fa = 0.2;
-  private readonly threshold = 0.9;
+  private get fa() {
+    return this.config.CAPTURER_LPF_FA
+  };
+  private get threshold() {
+    return this.config.CAPTURER_LPF_THRESHOLD
+  }
 
   public snapshot?: Snapshot;
 
