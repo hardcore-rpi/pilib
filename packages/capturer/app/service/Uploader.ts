@@ -18,7 +18,7 @@ export class Uploader extends Service {
   }
 
   private async saveToLocal(snapshot: Snapshot) {
-    const { buf, fileExt } = await snapshot.toBuf();
+    const { buf, fileExt } = snapshot.toBuf();
     const filePath = path.join(
       this.endpoint,
       snapshot.extra.cameraName,
@@ -34,7 +34,7 @@ export class Uploader extends Service {
   }
 
   private async saveToRemote(snapshot: Snapshot) {
-    const { buf, fileExt } = await snapshot.toBuf();
+    const { buf, fileExt } = snapshot.toBuf();
 
     const upload_time = snapshot.timestampStr;
 

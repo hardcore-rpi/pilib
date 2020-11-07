@@ -15,9 +15,9 @@ export class Snapshot {
   ) {}
 
   /** 转换成 buffer */
-  toBuf = memoize(async () => {
-    const fileExt = 'png';
-    const buf = await cv.imencodeAsync('.' + fileExt, this.mat);
+  toBuf = memoize(() => {
+    const fileExt = 'jpg';
+    const buf = cv.imencode('.' + fileExt, this.mat);
     return { fileExt, buf };
   });
 
@@ -25,18 +25,18 @@ export class Snapshot {
     return dayjs(this.extra.timestamp).format('YYYY-MM-DD HH:mm:ss');
   }
 
-  detectAllFaces = memoize(async () => {
+  detectAllFaces = memoize(() => {
     // 图片灰化
     const grayImg = this.mat.bgrToGray();
-    const detection = await Snapshot.classifier.detectMultiScaleAsync(grayImg);
+    const detection = Snapshot.classifier.detectMultiScale(grayImg);
 
     return { detection, grayImg };
   });
 
-  markAllFaces = memoize(async () => {
-    const { detection } = await this.detectAllFaces();
+  markAllFaces = memoize(() => {
+    const { detection } = this.detectAllFaces();
 
-    const markedMat = await this.mat.copyAsync();
+    const markedMat = this.mat.copy();
     detection.objects.forEach(r => {
       markedMat.drawRectangle(r, new cv.Vec3(0, 0, 255));
     });
@@ -44,9 +44,9 @@ export class Snapshot {
     return { markedMat };
   });
 
-  copy = memoize(async (opt: { markAllFaces?: boolean }) => {
+  copy = memoize((opt: { markAllFaces?: boolean }) => {
     if (opt.markAllFaces) {
-      const { markedMat } = await this.markAllFaces();
+      const { markedMat } = this.markAllFaces();
       return new Snapshot(markedMat, { ...this.extra });
     }
 

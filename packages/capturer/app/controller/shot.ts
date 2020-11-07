@@ -15,7 +15,7 @@ export const shot: Middleware = async ctx => {
     await ctx.app.service.uploader.upload(snapshot);
   }
 
-  const { buf } = await snapshot.toBuf();
+  const { buf } = snapshot.toBuf();
 
   ctx.set({ 'Content-Type': 'image' });
   ctx.body = buf;

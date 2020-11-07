@@ -2,7 +2,7 @@
 
 import { App, IScheduler, IService } from 'ah-server';
 import { CapturerConfig } from './Config';
-import { liveMonitor, shot } from './controller';
+import { liveMonitor, liveStream, shot } from './controller';
 import { RefreshCapturer } from './RefreshCapturer';
 import { Camera, Capturer, Uploader } from './service';
 
@@ -23,6 +23,10 @@ class CapturerApp extends App {
     // 路由表
     this.router.get('/live', liveMonitor);
     this.router.get('/shot', shot);
+
+    if (this.config.LIVE_STREAM_ENABLE) {
+      this.router.get('/liveStream', liveStream);
+    }
   }
 }
 

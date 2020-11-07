@@ -1,4 +1,5 @@
 import { Service } from 'ah-server';
+import { CapturerUpdateEvt } from '../Event';
 import { Snapshot } from '../Snapshot';
 
 declare module 'ah-server' {
@@ -15,10 +16,10 @@ export class Capturer extends Service {
   // 一阶滤波系数
   // 系数越小，滤波结果越平稳，但是灵敏度越低；滤波系数越大，灵敏度越高，但是滤波结果越不稳定
   private get fa() {
-    return this.config.CAPTURER_LPF_FA
-  };
+    return this.config.CAPTURER_LPF_FA;
+  }
   private get threshold() {
-    return this.config.CAPTURER_LPF_THRESHOLD
+    return this.config.CAPTURER_LPF_THRESHOLD;
   }
 
   public snapshot?: Snapshot;
@@ -28,7 +29,9 @@ export class Capturer extends Service {
       const snapshot = await this.service.camera.read();
       this.snapshot = snapshot;
 
-      const { detection } = await snapshot.detectAllFaces();
+      this.app.emit(CapturerUpdateEvt, { snapshot } as CapturerUpdateEvt);
+
+      const { detection } = snapshot.detectAllFaces();
 
       // 一阶滤波
       const currentValue = this.fa * detection.objects.length + (1 - this.fa) * this.lastValue;
@@ -50,7 +53,7 @@ export class Capturer extends Service {
 
         if (faceIn) {
           // 有人进入画面，上传
-          const ds = await snapshot.copy({ markAllFaces: true });
+          const ds = snapshot.copy({ markAllFaces: true });
           await this.service.uploader.upload(ds);
         }
       }

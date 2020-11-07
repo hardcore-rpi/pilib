@@ -9,6 +9,6 @@ export const liveMonitor: Middleware = async ctx => {
     Refresh: ctx.app.config.LIVE_REFRESH_INTERVAL + '',
   });
 
-  const ns = await snapshot.copy({ markAllFaces: true });
-  ctx.body = (await ns.toBuf()).buf;
+  const ns = snapshot.copy({ markAllFaces: true });
+  ctx.body = ns.toBuf().buf;
 };
