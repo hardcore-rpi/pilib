@@ -1,14 +1,38 @@
-import { Middleware } from 'koa';
+import { Controller, IContext, IControllerMapperItem } from 'ah-server';
+import { CapturerUpdateEvt } from '../Event';
 
-export const liveMonitor: Middleware = async ctx => {
-  const { snapshot } = ctx.app.service.capturer;
-  if (!snapshot) return;
+export class LiveMonitorController extends Controller {
+  mapper: IControllerMapperItem[] = [
+    {
+      path: '/live',
+      method: 'GET',
+      handler: this.getSnapshot,
+    },
+  ];
 
-  ctx.set({
-    'Content-Type': 'image',
-    Refresh: ctx.app.config.LIVE_REFRESH_INTERVAL + '',
-  });
+  private capturerEvt?: CapturerUpdateEvt;
+  private disposeList: (() => void)[] = [];
 
-  const ns = snapshot.copy({ markAllFaces: true });
-  ctx.body = ns.toBuf().buf;
-};
+  async init() {
+    const update = (evt: CapturerUpdateEvt) => {
+      this.capturerEvt = evt;
+    };
+
+    this.app.on(CapturerUpdateEvt, update);
+    this.disposeList.push(() => this.app.off(CapturerUpdateEvt, update));
+  }
+
+  async getSnapshot(ctx: IContext) {
+    if (!this.capturerEvt) return;
+
+    const { detector } = this.capturerEvt;
+
+    ctx.set({
+      'Content-Type': 'image',
+      Refresh: ctx.app.config.LIVE_REFRESH_INTERVAL + '',
+    });
+
+    const { markedSnapshot } = detector.mark();
+    ctx.body = markedSnapshot.toBuf().buf;
+  }
+}

@@ -1,22 +1,32 @@
-import { Middleware } from 'koa';
+import { Controller, IContext, IControllerMapperItem } from 'ah-server';
 
 /** 触发拍照 */
-export const shot: Middleware = async ctx => {
-  const query = ctx.validate<{ upload?: string }>(ctx.request.query, {
-    type: 'object',
-    properties: {
-      upload: { type: 'string' },
+export class ShotController extends Controller {
+  mapper: IControllerMapperItem[] = [
+    {
+      path: '/shot',
+      method: 'GET',
+      handler: this.shot,
     },
-  });
+  ];
 
-  const snapshot = await ctx.app.service.camera.read();
+  async shot(ctx: IContext) {
+    const query = ctx.validate<{ upload?: string }>(ctx.request.query, {
+      type: 'object',
+      properties: {
+        upload: { type: 'string' },
+      },
+    });
 
-  if (query.upload === '1') {
-    await ctx.app.service.uploader.upload(snapshot);
+    const snapshot = await ctx.app.service.camera.read();
+
+    if (query.upload === '1') {
+      await ctx.app.service.uploader.upload(snapshot);
+    }
+
+    const { buf } = snapshot.toBuf();
+
+    ctx.set({ 'Content-Type': 'image' });
+    ctx.body = buf;
   }
-
-  const { buf } = snapshot.toBuf();
-
-  ctx.set({ 'Content-Type': 'image' });
-  ctx.body = buf;
-};
+}

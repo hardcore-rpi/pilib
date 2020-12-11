@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import { App, IScheduler, IService } from 'ah-server';
+import { App, Controller, IService, Scheduler } from 'ah-server';
 import { CapturerConfig } from './Config';
-import { liveMonitor, liveStream, shot } from './controller';
+import { LiveMonitorController, LiveStreamController, ShotController } from './controller';
 import { RefreshCapturer } from './RefreshCapturer';
 import { Camera, Capturer, Uploader } from './service';
 
@@ -13,21 +13,14 @@ class CapturerApp extends App {
     uploader: new Uploader(this),
   };
 
-  scheduler: IScheduler = {
-    refreshCapturer: new RefreshCapturer(this),
-  };
-
-  protected async init() {
-    await super.init();
-
-    // 路由表
-    this.router.get('/live', liveMonitor);
-    this.router.get('/shot', shot);
-
-    if (this.config.LIVE_STREAM_ENABLE) {
-      this.router.get('/liveStream', liveStream);
-    }
-  }
+  schedulerList: Scheduler[] = [RefreshCapturer].map(S => new S(this));
+  controllerList: Controller[] = [
+    LiveMonitorController,
+    ShotController,
+    this.config.LIVE_STREAM_ENABLE && LiveStreamController,
+  ]
+    .filter(C => !!C)
+    .map((C: any) => new C(this));
 }
 
 new CapturerApp(new CapturerConfig()).start().catch(e => {

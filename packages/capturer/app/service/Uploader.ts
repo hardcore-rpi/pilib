@@ -10,9 +10,6 @@ declare module 'ah-server' {
 }
 
 export class Uploader extends Service {
-  async init() {}
-  async release() {}
-
   private get endpoint() {
     return this.config.UPLOAD_ENDPOINT;
   }
@@ -75,6 +72,8 @@ export class Uploader extends Service {
   }
 
   async upload(snapshot: Snapshot) {
+    if (this.config.DISABLE_UPLOAD) return;
+
     if (this.endpoint.startsWith('http://') || this.endpoint.startsWith('https://')) {
       await this.saveToRemote(snapshot);
     } else {

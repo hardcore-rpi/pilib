@@ -1,6 +1,6 @@
 import { Service } from 'ah-server';
+import { Detector } from '../Detector';
 import { CapturerUpdateEvt } from '../Event';
-import { Snapshot } from '../Snapshot';
 
 declare module 'ah-server' {
   interface IService {
@@ -13,25 +13,33 @@ export class Capturer extends Service {
   private lastFaceCnt = 0;
   private lastValue = 0;
 
+  private getRoi() {
+    if (!this.config.CAPTURER_ROI_AREA) return;
+
+    const [x0, y0, width, height] = this.config.CAPTURER_ROI_AREA.split(':').map(s => +s);
+    return { area: { x0, y0, width, height } };
+  }
+
   // 一阶滤波系数
   // 系数越小，滤波结果越平稳，但是灵敏度越低；滤波系数越大，灵敏度越高，但是滤波结果越不稳定
   private get fa() {
     return this.config.CAPTURER_LPF_FA;
   }
+
   private get threshold() {
     return this.config.CAPTURER_LPF_THRESHOLD;
   }
 
-  public snapshot?: Snapshot;
-
   async update() {
     try {
       const snapshot = await this.service.camera.read();
-      this.snapshot = snapshot;
+      const detector = new Detector(snapshot, {
+        roi: this.getRoi(),
+      });
 
-      this.app.emit(CapturerUpdateEvt, { snapshot } as CapturerUpdateEvt);
+      this.app.emit(CapturerUpdateEvt, { snapshot, detector } as CapturerUpdateEvt);
 
-      const { detection } = snapshot.detectAllFaces();
+      const { detection } = detector.detect();
 
       // 一阶滤波
       const currentValue = this.fa * detection.objects.length + (1 - this.fa) * this.lastValue;
@@ -53,8 +61,8 @@ export class Capturer extends Service {
 
         if (faceIn) {
           // 有人进入画面，上传
-          const ds = snapshot.copy({ markAllFaces: true });
-          await this.service.uploader.upload(ds);
+          const { markedSnapshot } = detector.mark();
+          await this.service.uploader.upload(markedSnapshot);
         }
       }
     } catch (e) {
