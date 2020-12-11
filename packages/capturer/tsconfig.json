@@ -8,5 +8,5 @@
     "esModuleInterop": true,
     "importHelpers": true
   },
-  "include": ["app"]
+  "include": ["src"]
 }

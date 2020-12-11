@@ -52,13 +52,10 @@ export class Detector {
       return { detection };
     }
 
-    //
-    else {
-      const grayMat = mat.bgrToGray();
-      const detection = Detector.classifier.detectMultiScale(grayMat);
+    const grayMat = mat.bgrToGray();
+    const detection = Detector.classifier.detectMultiScale(grayMat);
 
-      return { detection };
-    }
+    return { detection };
   });
 
   mark = memoize(() => {

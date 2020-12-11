@@ -1,12 +1,9 @@
-#!/usr/bin/env node
-
 import { App, Controller, IService, Scheduler } from 'ah-server';
-import { CapturerConfig } from './Config';
 import { LiveMonitorController, LiveStreamController, ShotController } from './controller';
 import { RefreshCapturer } from './RefreshCapturer';
 import { Camera, Capturer, Uploader } from './service';
 
-class CapturerApp extends App {
+export class CapturerApp extends App {
   service: IService = {
     camera: new Camera(this),
     capturer: new Capturer(this),
@@ -22,8 +19,3 @@ class CapturerApp extends App {
     .filter(C => !!C)
     .map((C: any) => new C(this));
 }
-
-new CapturerApp(new CapturerConfig()).start().catch(e => {
-  console.error(e);
-  process.exit(1);
-});
