@@ -1,6 +1,6 @@
 {
   "name": "pilib-capturer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "树莓派人脸识别库",
   "bin": "dist/cli.js",
   "files": [
@@ -17,8 +17,8 @@
   "dependencies": {
     "ah-server": "^2.0.11",
     "dayjs": "^1.9.4",
-    "tslib": "^2.0.3",
-    "fast-memoize": "^2.5.2"
+    "fast-memoize": "^2.5.2",
+    "tslib": "^2.0.3"
   },
   "devDependencies": {
     "@types/node": "^14.11.10",
