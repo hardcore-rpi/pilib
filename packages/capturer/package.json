@@ -9,7 +9,7 @@
   ],
   "homepage": "https://github.com/hardcore-rpi/pilib/tree/main/packages/capturer",
   "scripts": {
-    "dev": "nodemon -e ts --watch src/app src/app/cli.ts",
+    "dev": "nodemon -e ts --watch src src/cli.ts",
     "build": "ah-workflow build",
     "ci": "ah-workflow ci",
     "prepublishOnly": "npm run ci && npm run build",
