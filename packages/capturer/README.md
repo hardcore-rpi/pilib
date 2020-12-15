@@ -9,6 +9,7 @@
 - 一阶滤波器防抓拍抖动
 - 抓拍上传指定地址
 
+![](https://raw.githubusercontent.com/hardcore-rpi/pilib/main/doc/capturer-demo.jpg)
 
 # CLI
 
