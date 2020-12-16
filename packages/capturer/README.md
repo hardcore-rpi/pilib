@@ -44,4 +44,4 @@ pilib-capturer
 # HTTP API
 
 - `GET /live`: 实时预览图片
-- `GET /shot?upload=1`: 触发抓拍
+- `GET /shot?upload=1&detect=1`: 触发抓拍
