@@ -1,4 +1,4 @@
-![pilib](https://raw.githubusercontent.com/hardcore-rpi/pilib/main/doc/pilib.png)
+![pilib](https://hardcore-rpi.biko.pub/gw/52b8d91a-eb9f-4057-9d5d-00679fed4493.png)
 
 # 树莓派人脸识别库
 
@@ -9,7 +9,7 @@
 - 一阶滤波器防抓拍抖动
 - 抓拍上传指定地址
 
-![](https://raw.githubusercontent.com/hardcore-rpi/pilib/main/doc/capturer-demo.jpg)
+![](https://hardcore-rpi.biko.pub/gw/3d33350d-4f2f-46be-89e5-37f79b9d93ab.jpg)
 
 # CLI
 
