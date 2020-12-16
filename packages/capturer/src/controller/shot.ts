@@ -1,4 +1,5 @@
 import { Controller, IContext, IControllerMapperItem } from 'ah-server';
+import { CapturerUpdateEvt } from '../Event';
 
 /** 触发拍照 */
 export class ShotController extends Controller {
@@ -10,15 +11,34 @@ export class ShotController extends Controller {
     },
   ];
 
+  private capturerEvt?: CapturerUpdateEvt;
+  private disposeList: (() => void)[] = [];
+
+  async init() {
+    const update = (evt: CapturerUpdateEvt) => {
+      this.capturerEvt = evt;
+    };
+
+    this.app.on(CapturerUpdateEvt, update);
+    this.disposeList.push(() => this.app.off(CapturerUpdateEvt, update));
+  }
+
   async shot(ctx: IContext) {
-    const query = ctx.validate<{ upload?: string }>(ctx.request.query, {
+    if (!this.capturerEvt) return;
+
+    const query = ctx.validate<{ upload?: string; detect?: string }>(ctx.request.query, {
       type: 'object',
       properties: {
         upload: { type: 'string' },
+        detect: { type: 'string' },
       },
     });
 
-    const snapshot = await ctx.app.service.camera.read();
+    let snapshot = this.capturerEvt.snapshot;
+
+    if (query.detect === '1') {
+      snapshot = this.capturerEvt.detector.mark().markedSnapshot;
+    }
 
     if (query.upload === '1') {
       await ctx.app.service.uploader.upload(snapshot);
