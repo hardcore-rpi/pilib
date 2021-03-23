@@ -1,6 +1,6 @@
 {
   "name": "pilib-ws-uart",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "树莓派 websocket 串口透传",
   "main": "dist/index.js",
   "bin": "dist/run.js",
