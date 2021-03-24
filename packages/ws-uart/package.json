@@ -1,6 +1,6 @@
 {
   "name": "pilib-ws-uart",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "树莓派 websocket 串口透传",
   "files": [
     "dist"
