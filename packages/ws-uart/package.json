@@ -1,10 +1,6 @@
 {
   "name": "pilib-ws-uart",
-<<<<<<< HEAD
-  "version": "1.0.2",
-=======
   "version": "1.0.3",
->>>>>>> 80fdd0b81937d52142e73147b4334c649e338b91
   "description": "树莓派 websocket 串口透传",
   "files": [
     "dist"
@@ -14,11 +10,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node -P tsconfig.json src/run.ts",
-<<<<<<< HEAD
-    "build": "tsc --outDir dist",
-=======
     "build": "rm -rf dist && tsc --outDir dist",
->>>>>>> 80fdd0b81937d52142e73147b4334c649e338b91
     "prepublishOnly": "npm run build"
   },
   "author": "",
