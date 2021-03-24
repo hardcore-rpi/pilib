@@ -24,7 +24,7 @@ export const startRpiWsUart = (cfg: { port: number; uart: { com: string; baudRat
     autoAcceptConnections: false,
   });
 
-  const uart = new SerialPort('/dev/tty.usbserial-1420', {
+  const uart = new SerialPort(cfg.uart.com, {
     baudRate: cfg.uart.baudRate,
     autoOpen: false,
   });
