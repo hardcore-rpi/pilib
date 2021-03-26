@@ -83,6 +83,7 @@ export const startRpiWsUart = (cfg: { port: number; uart: { com: string; baudRat
       conn.on('close', (code, desc) => {
         logger.info(`ws close: <${code}>${desc}`);
         // ws 断开的时候，关闭串口
+        uart.removeAllListeners();
         uart.close();
       });
     });
