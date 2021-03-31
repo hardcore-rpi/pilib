@@ -52,3 +52,8 @@ pilib-capturer
 
 - `GET /live`: 实时预览图片
 - `GET /shot?upload=1&detect=1`: 触发抓拍
+
+
+-------
+
+![](https://tech.biko.pub/gw/assets/20210330130624.png)
