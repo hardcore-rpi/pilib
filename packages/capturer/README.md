@@ -1,6 +1,6 @@
 ![pilib](https://tech.biko.pub/gw/52b8d91a-eb9f-4057-9d5d-00679fed4493.png)
 
-# 树莓派人脸识别抓拍程序
+## 树莓派人脸识别抓拍程序
 
 人脸识别 + 抓拍 + 上传
 
@@ -11,12 +11,13 @@
 
 ![](https://tech.biko.pub/gw/3d33350d-4f2f-46be-89e5-37f79b9d93ab.jpg)
 
-# 命令行
+## 快速安装
 
-```bash
-cnpm i pilib-capturer -g
-pilib-capturer
-```
+命令行执行 `wget -qO- https://tech.biko.pub/resource/pilib-capturer-setup.sh | sudo bash`
+
+或手动安装：`cnpm i pilib-capturer -g`
+
+## 命令行参数
 
 通过环境变量指定 cli 参数
 
@@ -48,7 +49,7 @@ pilib-capturer
 
 - `LOCAL_PORT`: 本地 http 监听端口号，默认 10001
 
-# HTTP API
+## HTTP API
 
 - `GET /live`: 实时预览图片
 - `GET /shot?upload=1&detect=1`: 触发抓拍
