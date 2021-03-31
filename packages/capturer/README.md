@@ -1,6 +1,6 @@
 ![pilib](https://tech.biko.pub/gw/52b8d91a-eb9f-4057-9d5d-00679fed4493.png)
 
-# 树莓派人脸识别库
+# 树莓派人脸识别抓拍程序
 
 人脸识别 + 抓拍 + 上传
 
@@ -53,7 +53,6 @@ pilib-capturer
 - `GET /live`: 实时预览图片
 - `GET /shot?upload=1&detect=1`: 触发抓拍
 
-
--------
+---
 
 ![](https://tech.biko.pub/gw/assets/20210330130624.png)
