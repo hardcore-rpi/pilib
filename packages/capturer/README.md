@@ -9,6 +9,8 @@
 - 一阶滤波器防抓拍抖动
 - 抓拍上传指定地址
 
+GitHub 仓库地址戳 [这里](https://github.com/hardcore-rpi/pilib/tree/main/packages/capturer)
+
 ![](https://tech.biko.pub/gw/3d33350d-4f2f-46be-89e5-37f79b9d93ab.jpg)
 
 ## 快速安装
