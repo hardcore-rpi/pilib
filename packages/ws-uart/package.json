@@ -8,7 +8,6 @@
   "main": "dist/index.js",
   "bin": "dist/run.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node -P tsconfig.json src/run.ts",
     "build": "rm -rf dist && tsc --outDir dist",
     "prepublishOnly": "npm run build"
