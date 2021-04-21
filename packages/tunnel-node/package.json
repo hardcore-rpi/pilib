@@ -1,5 +1,5 @@
 {
-  "name": "pilib-tunnel",
+  "name": "pilib-tunnel-node",
   "files": [
     "dist"
   ],
@@ -7,14 +7,13 @@
   "bin": "dist/cli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node -P tsconfig.json src/run.ts",
+    "dev": "ts-node -P tsconfig.json src/cli.ts",
     "build": "rm -rf dist && tsc --outDir dist",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "ah-event-bus": "^1.0.8",
     "ah-logger": "^0.1.4",
-    "node-pty": "^0.10.0",
+    "pilib-tunnel-core": "^1.0.0",
     "urllib": "^2.37.1",
     "websocket": "^1.0.33",
     "yargs": "^16.2.0"

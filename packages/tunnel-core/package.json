@@ -1,0 +1,27 @@
+{
+  "name": "pilib-tunnel-core",
+  "version": "1.0.0",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "ts-node -P tsconfig.json src/run.ts",
+    "build": "rm -rf dist && npm run pure-build",
+    "pure-build": "tsc --outDir dist",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "ah-event-bus": "^1.0.8",
+    "ah-logger": "^0.1.4",
+    "urllib": "^2.37.1",
+    "websocket": "^1.0.33",
+    "yargs": "^16.2.0"
+  },
+  "devDependencies": {
+    "@types/websocket": "^1.0.2",
+    "@types/yargs": "^16.0.1",
+    "typescript": "^4.2.4"
+  }
+}

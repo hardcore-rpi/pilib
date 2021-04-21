@@ -1,17 +1,21 @@
 import { EventBus } from 'ah-event-bus';
 import { FSM } from './lib/FSM';
-import { w3cwebsocket as WebSocketClient } from 'websocket';
 import { TunnelMsgEvt, ReconnectEvt, StageChangeEvt, TunnelErrorEvt } from './event';
 import { BaseDTO, parseDTO } from './dto';
-import { IAuthAdapter } from './adapter';
+
+export interface IWebsocket {
+  onopen: () => any;
+  onmessage: (ev: { data: any }) => any;
+  onerror: (err: Error) => any;
+  onclose: (ev: { code: number; reason: string }) => any;
+  close(code?: number, reason?: string): void;
+  send(msg: string): void;
+}
 
 export interface ITunnelConfig {
   endpoint: string;
   secure: boolean;
   name: string;
-  adapter: {
-    auth: IAuthAdapter;
-  };
 }
 
 export type ITunnelStage =
@@ -19,16 +23,17 @@ export type ITunnelStage =
   | { type: 'auth-checking' }
   | { type: 'auth-success'; token: string }
   | { type: 'auth-failed'; err: Error }
-  | { type: 'connecting'; url: string; ws: WebSocketClient }
-  | { type: 'connect-success'; ws: WebSocketClient }
+  | { type: 'connecting'; url: string; ws: IWebsocket }
+  | { type: 'connect-success'; ws: IWebsocket }
   | { type: 'disconnected'; code: number; desc: string };
 
-export class Tunnel extends EventBus {
+export abstract class Tunnel extends EventBus {
   constructor(protected readonly cfg: ITunnelConfig) {
     super();
   }
 
-  protected RECONNECT_DELAY = 10e3;
+  abstract getTunnelToken(): Promise<string>;
+  abstract getWs(url: string, protocol: string): IWebsocket;
 
   protected stageError(msg: string) {
     return new Error(`stage error: current=${this.stage.cur.type}, msg=${msg}`);
@@ -46,12 +51,12 @@ export class Tunnel extends EventBus {
       this.stage.cur.type === 'disconnected'
     ) {
       const reconnect = () => {
-        this.emit(new ReconnectEvt(this.RECONNECT_DELAY));
-        setTimeout(() => this.connect(), this.RECONNECT_DELAY);
+        const timeout = 10e3;
+        this.emit(new ReconnectEvt(timeout));
+        setTimeout(() => this.connect(), timeout);
       };
 
-      this.cfg.adapter.auth
-        .getTunnelToken()
+      this.getTunnelToken()
         .then(token => {
           this.stage.transform({ type: 'auth-success', token });
 
@@ -60,7 +65,7 @@ export class Tunnel extends EventBus {
           const url = `${wsProtocol}://${this.cfg.endpoint}/tunnel/client?${query}`;
 
           // 初始化 ws
-          const ws = new WebSocketClient(url, 'pilib-tunnel');
+          const ws = this.getWs(url, 'pilib-tunnel');
 
           ws.onopen = () => this.stage.transform({ type: 'connect-success', ws });
 
