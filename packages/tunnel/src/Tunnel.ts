@@ -1,6 +1,6 @@
 import { EventBus } from 'ah-event-bus';
 import { FSM } from './lib/FSM';
-import { client as WebSocketClient, connection } from 'websocket';
+import { w3cwebsocket as WebSocketClient } from 'websocket';
 import { TunnelMsgEvt, ReconnectEvt, StageChangeEvt, TunnelErrorEvt } from './event';
 import { curl } from 'urllib';
 import { BaseDTO, parseDTO } from './dto';
@@ -19,8 +19,7 @@ export type ITunnelStage =
   | { type: 'auth-success'; token: string }
   | { type: 'auth-failed'; err: Error }
   | { type: 'connecting'; url: string; ws: WebSocketClient }
-  | { type: 'connected'; conn: connection }
-  | { type: 'connect-failed'; err: Error }
+  | { type: 'connect-success'; ws: WebSocketClient }
   | { type: 'disconnected'; code: number; desc: string };
 
 export class Tunnel extends EventBus {
@@ -43,7 +42,6 @@ export class Tunnel extends EventBus {
     if (
       this.stage.cur.type === 'init' ||
       this.stage.cur.type === 'auth-failed' ||
-      this.stage.cur.type === 'connect-failed' ||
       this.stage.cur.type === 'disconnected'
     ) {
       const reconnect = () => {
@@ -64,41 +62,35 @@ export class Tunnel extends EventBus {
           const token = rsp.data.data.token;
           this.stage.transform({ type: 'auth-success', token });
 
-          const ws = new WebSocketClient();
-
-          ws.on('connect', conn => {
-            this.stage.transform({ type: 'connected', conn });
-
-            // 如果对方关闭连接，转入 disconnected
-            conn.on('close', (code, desc) => {
-              this.stage.transform({ type: 'disconnected', code, desc });
-              reconnect();
-            });
-
-            // 转发事件
-            conn.on('message', d => {
-              // FIXME: 现在忽略 binary 类型的数据
-              const utf8Data = d.utf8Data;
-              if (!utf8Data) return;
-
-              const dto = parseDTO(utf8Data);
-              if (!dto) return;
-
-              this.emit(new TunnelMsgEvt(dto));
-            });
-          });
-
-          ws.on('connectFailed', err => {
-            this.stage.transform({ type: 'connect-failed', err });
-            reconnect();
-          });
-
           const wsProtocol = this.cfg.secure ? 'wss' : 'ws';
           const query = new URLSearchParams({ name: this.cfg.name, token }).toString();
           const url = `${wsProtocol}://${this.cfg.endpoint}/tunnel/client?${query}`;
 
-          // 开始连接 ws
-          ws.connect(url, 'pilib-tunnel', undefined);
+          // 初始化 ws
+          const ws = new WebSocketClient(url, 'pilib-tunnel');
+
+          ws.onopen = () => this.stage.transform({ type: 'connect-success', ws });
+
+          // 转发事件
+          ws.onmessage = msg => {
+            // FIXME: 现在忽略 binary 类型的数据
+            let utf8Data = typeof msg.data === 'string' ? msg.data : undefined;
+            if (!utf8Data) return;
+
+            const dto = parseDTO(utf8Data);
+            if (!dto) return;
+
+            this.emit(new TunnelMsgEvt(dto));
+          };
+
+          // 如果对方关闭连接，转入 disconnected
+          ws.onclose = ev => {
+            this.stage.transform({ type: 'disconnected', code: ev.code, desc: ev.reason });
+            reconnect();
+          };
+
+          ws.onerror = err => this.emit(new TunnelErrorEvt(err));
+
           this.stage.transform({ type: 'connecting', url, ws });
         })
         .catch(err => {
@@ -115,13 +107,11 @@ export class Tunnel extends EventBus {
 
   /** 断开连接 */
   disconnect(code: number = 0, desc: string = 'close') {
-    if (this.stage.cur.type === 'connected') {
-      const { conn } = this.stage.cur;
+    if (this.stage.cur.type === 'connect-success') {
+      const { ws } = this.stage.cur;
 
       // FIXME: 关闭操作可能有要延时等待的地方
-      conn.close();
-      conn.removeAllListeners();
-
+      ws.close(code, desc);
       this.stage.transform({ type: 'disconnected', code, desc });
       //
     } else {
@@ -130,10 +120,10 @@ export class Tunnel extends EventBus {
   }
 
   send(dto: BaseDTO) {
-    if (this.stage.cur.type === 'connected') {
-      const { conn } = this.stage.cur;
+    if (this.stage.cur.type === 'connect-success') {
+      const { ws } = this.stage.cur;
       const msg = dto.sequelize();
-      conn.send(msg, err => err && this.emit(new TunnelErrorEvt(err)));
+      ws.send(msg);
       //
     } else {
       throw this.stageError('send');
