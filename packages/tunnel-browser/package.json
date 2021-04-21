@@ -1,6 +1,6 @@
 {
   "name": "pilib-tunnel-browser",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "files": [
     "dist"
   ],
@@ -11,7 +11,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "pilib-tunnel-core": "^1.0.0"
+    "pilib-tunnel-core": "^1.0.1"
   },
   "devDependencies": {
     "typescript": "^4.2.4"
