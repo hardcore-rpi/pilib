@@ -2,15 +2,16 @@ import { EventBus } from 'ah-event-bus';
 import { FSM } from './lib/FSM';
 import { w3cwebsocket as WebSocketClient } from 'websocket';
 import { TunnelMsgEvt, ReconnectEvt, StageChangeEvt, TunnelErrorEvt } from './event';
-import { curl } from 'urllib';
 import { BaseDTO, parseDTO } from './dto';
+import { IAuthAdapter } from './adapter';
 
 export interface ITunnelConfig {
   endpoint: string;
   secure: boolean;
   name: string;
-  /** 用户登录 session */
-  session: string;
+  adapter: {
+    auth: IAuthAdapter;
+  };
 }
 
 export type ITunnelStage =
@@ -49,17 +50,9 @@ export class Tunnel extends EventBus {
         setTimeout(() => this.connect(), this.RECONNECT_DELAY);
       };
 
-      const httpProtocol = this.cfg.secure ? 'https' : 'http';
-
-      curl<{ data: { token: string } }>(`${httpProtocol}://${this.cfg.endpoint}/user/tunnelToken`, {
-        method: 'GET',
-        dataType: 'json',
-        headers: {
-          'x-user-session': this.cfg.session,
-        },
-      })
-        .then(rsp => {
-          const token = rsp.data.data.token;
+      this.cfg.adapter.auth
+        .getTunnelToken()
+        .then(token => {
           this.stage.transform({ type: 'auth-success', token });
 
           const wsProtocol = this.cfg.secure ? 'wss' : 'ws';

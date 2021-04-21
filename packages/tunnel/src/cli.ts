@@ -10,22 +10,37 @@ import {
   TunnelMsgEvt,
 } from './index';
 import { Logger } from 'ah-logger';
+import { curl } from 'urllib';
 
 const logger = new Logger('Tunnel');
 
-function getConfig(): ITunnelConfig {
-  const args = yargs
-    .option('session', { type: 'string' })
-    .option('secure', { type: 'boolean', default: true })
-    .option('endpoint', { default: 'api.biko.pub' })
-    .option('name', { default: 'new-tunnel' })
-    .demandOption('session').argv;
+const args = yargs
+  .option('session', { type: 'string' })
+  .option('secure', { type: 'boolean', default: true })
+  .option('endpoint', { default: 'api.biko.pub' })
+  .option('name', { default: 'new-tunnel' })
+  .demandOption('session').argv;
 
-  return { endpoint: args.endpoint, session: args.session, name: args.name, secure: args.secure };
-}
+const config: ITunnelConfig = {
+  endpoint: args.endpoint,
+  secure: args.secure,
+  name: args.name,
+  adapter: {
+    auth: {
+      getTunnelToken: async () => {
+        const httpProtocol = args.secure ? 'https' : 'http';
 
-const config = getConfig();
-logger.info(`config: ${JSON.stringify(config)}`);
+        const resp = await curl<{ data: { token: string } }>(
+          `${httpProtocol}://${args.endpoint}/user/tunnelToken`,
+          { dataType: 'json', headers: { 'x-user-session': args.session } }
+        );
+
+        if (resp.status !== 200) throw new Error(`getTunnelToken error: ${resp.status}`);
+        return resp.data.data.token;
+      },
+    },
+  },
+};
 
 const tunnel = new Tunnel(config);
 
