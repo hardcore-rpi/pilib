@@ -127,4 +127,12 @@ export abstract class Tunnel extends EventBus {
       throw this.stageError('send');
     }
   }
+
+  destroy() {
+    // 断开连接
+    this.disconnect();
+
+    // 关闭所有监听
+    this.off();
+  }
 }
