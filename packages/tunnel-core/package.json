@@ -6,7 +6,6 @@
   ],
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node -P tsconfig.json src/run.ts",
     "build": "rm -rf dist && npm run pure-build",
     "pure-build": "tsc --outDir dist",
