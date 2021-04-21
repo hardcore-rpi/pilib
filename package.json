@@ -4,7 +4,7 @@
   "scripts": {
     "postinstall": "lerna bootstrap",
     "test": "lerna run test",
-    "ci": "npm run test",
+    "ci": "lerna run ci",
     "release": "npm run ci && lerna publish"
   },
   "devDependencies": {
