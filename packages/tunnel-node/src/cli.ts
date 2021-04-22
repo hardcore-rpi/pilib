@@ -15,6 +15,7 @@ const logger = new Logger('Tunnel');
 
 const args = yargs
   .option('secure', { type: 'boolean', default: true })
+  .option('protocol', { default: 'simple' })
   .option('endpoint', { default: 'api.biko.pub' })
   .option('name', { default: 'new-tunnel' }).argv;
 
@@ -22,6 +23,7 @@ const config: ITunnelConfig = {
   endpoint: args.endpoint,
   secure: args.secure,
   name: args.name,
+  protocol: args.protocol,
 };
 
 const tunnel = new TunnelNode(config);

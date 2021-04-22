@@ -16,6 +16,7 @@ export interface ITunnelConfig {
   endpoint: string;
   secure: boolean;
   name: string;
+  protocol: string;
 }
 
 export type ITunnelStage =
@@ -61,7 +62,12 @@ export abstract class Tunnel extends EventBus {
           this.stage.transform({ type: 'auth-success', token });
 
           const wsProtocol = this.cfg.secure ? 'wss' : 'ws';
-          const query = new URLSearchParams({ name: this.cfg.name, token }).toString();
+          const query = new URLSearchParams({
+            name: this.cfg.name,
+            protocol: this.cfg.protocol,
+            token,
+          }).toString();
+
           const url = `${wsProtocol}://${this.cfg.endpoint}/tunnel/client?${query}`;
 
           // 初始化 ws
