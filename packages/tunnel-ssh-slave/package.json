@@ -1,6 +1,6 @@
 {
   "name": "pilib-tunnel-ssh-slave",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "files": [
     "dist"
   ],
@@ -15,9 +15,9 @@
     "ah-event-bus": "^1.0.8",
     "ah-logger": "^0.1.4",
     "node-pty": "^0.10.0",
-    "pilib-tunnel-core": "^1.1.0",
-    "pilib-tunnel-node": "^1.1.0",
-    "pilib-tunnel-ssh-protocol": "0.0.0",
+    "pilib-tunnel-core": "^2.0.0",
+    "pilib-tunnel-node": "^2.0.0",
+    "pilib-tunnel-ssh-protocol": "^1.0.0",
     "yargs": "^16.2.0"
   },
   "devDependencies": {

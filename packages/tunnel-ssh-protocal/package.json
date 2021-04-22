@@ -1,6 +1,6 @@
 {
   "name": "pilib-tunnel-ssh-protocol",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "files": [
     "dist"
   ],
@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "ah-event-bus": "^1.0.8",
-    "pilib-tunnel-core": "^1.1.0"
+    "pilib-tunnel-core": "^2.0.0"
   },
   "devDependencies": {
     "typescript": "^4.2.4"

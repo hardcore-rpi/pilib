@@ -1,6 +1,6 @@
 {
   "name": "pilib-tunnel-node",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "files": [
     "dist"
   ],
@@ -12,7 +12,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "pilib-tunnel-core": "^1.1.0",
+    "pilib-tunnel-core": "^2.0.0",
     "urllib": "^2.37.1",
     "websocket": "^1.0.33",
     "yargs": "^16.2.0"
