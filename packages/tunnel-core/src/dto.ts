@@ -7,12 +7,12 @@ export abstract class BaseDTO {
 export class CommandDTO extends BaseDTO {
   type = 'command';
 
-  constructor(readonly value: string) {
+  constructor(readonly cmd: string, readonly args: string) {
     super();
   }
 
   sequelize() {
-    return JSON.stringify({ type: this.type, value: this.value });
+    return JSON.stringify({ type: this.type, cmd: this.cmd, args: this.args });
   }
 }
 
@@ -45,7 +45,7 @@ export class DataBinaryDTO extends BaseDTO {
 export const parseDTO = (input: string): BaseDTO | null => {
   const { type, ...rest } = JSON.parse(input);
 
-  if (type === 'command') return new CommandDTO(rest.value);
+  if (type === 'command') return new CommandDTO(rest.cmd, rest.args);
   if (type === 'data-text') return new DataTextDTO(rest.value);
   if (type === 'data-binary') return new DataBinaryDTO(rest.value);
 

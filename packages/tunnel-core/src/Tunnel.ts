@@ -2,6 +2,7 @@ import { EventBus } from 'ah-event-bus';
 import { FSM } from './lib/FSM';
 import { TunnelMsgEvt, ReconnectEvt, StageChangeEvt, TunnelErrorEvt } from './event';
 import { BaseDTO, parseDTO } from './dto';
+import { Logger } from 'ah-logger';
 
 export interface IWebsocket {
   onopen: () => any;
@@ -19,6 +20,11 @@ export interface ITunnelConfig {
   protocol: string;
 }
 
+export interface ITunnelAdapter {
+  getTunnelToken(meta: { cfg: ITunnelConfig }): Promise<string>;
+  getWs(url: string, protocol: string, meta: { cfg: ITunnelConfig }): IWebsocket;
+}
+
 export type ITunnelStage =
   | { type: 'init' }
   | { type: 'auth-checking' }
@@ -28,13 +34,20 @@ export type ITunnelStage =
   | { type: 'connect-success'; ws: IWebsocket }
   | { type: 'disconnected'; code: number; desc: string };
 
-export abstract class Tunnel extends EventBus {
+export class Tunnel extends EventBus {
   constructor(protected readonly cfg: ITunnelConfig) {
     super();
+    this.attachLogger();
   }
 
-  abstract getTunnelToken(): Promise<string>;
-  abstract getWs(url: string, protocol: string): IWebsocket;
+  protected adapter: ITunnelAdapter = {
+    getTunnelToken: async () => {
+      throw new Error('adapter.getTunnelToken 未实现');
+    },
+    getWs: () => {
+      throw new Error('adapter.getWs 未实现');
+    },
+  };
 
   protected stageError(msg: string) {
     return new Error(`stage error: current=${this.stage.cur.type}, msg=${msg}`);
@@ -43,6 +56,31 @@ export abstract class Tunnel extends EventBus {
   protected stage = new FSM<ITunnelStage>({ type: 'init' }, ({ from, to }) =>
     this.emit(new StageChangeEvt(from, to))
   );
+
+  protected attachLogger() {
+    const logger = new Logger('Tunnel');
+
+    this.on(StageChangeEvt, ev => {
+      let msg = '';
+
+      if (ev.to.type === 'auth-failed') msg = ev.to.err + '';
+      if (ev.to.type === 'connecting') msg = ev.to.url;
+      if (ev.to.type === 'disconnected') msg = `code=${ev.to.code}, desc=${ev.to.desc}`;
+
+      // 转义控制字符
+      msg = msg ? JSON.stringify(msg) : '';
+
+      logger.info(`StageChangeEvt: ${ev.from.type} -> ${ev.to.type}${msg ? ', msg: ' + msg : ''}`);
+    })
+      .on(TunnelMsgEvt, ev => logger.info(`receive: ${ev.dto.type}\n${ev.dto.sequelize()}`))
+      .on(TunnelErrorEvt, ev => logger.error(ev.err.message))
+      .on(ReconnectEvt, ev => logger.info(`reconnecting in ${ev.delay}ms`));
+  }
+
+  setAdapter(adapter: ITunnelAdapter) {
+    this.adapter = adapter;
+    return this;
+  }
 
   /** 开始连接 */
   connect() {
@@ -57,7 +95,8 @@ export abstract class Tunnel extends EventBus {
         setTimeout(() => this.connect(), timeout);
       };
 
-      this.getTunnelToken()
+      this.adapter
+        .getTunnelToken({ cfg: this.cfg })
         .then(token => {
           this.stage.transform({ type: 'auth-success', token });
 
@@ -71,7 +110,7 @@ export abstract class Tunnel extends EventBus {
           const url = `${wsProtocol}://${this.cfg.endpoint}/tunnel/client?${query}`;
 
           // 初始化 ws
-          const ws = this.getWs(url, 'pilib-tunnel');
+          const ws = this.adapter.getWs(url, 'pilib-tunnel', { cfg: this.cfg });
 
           ws.onopen = () => this.stage.transform({ type: 'connect-success', ws });
 

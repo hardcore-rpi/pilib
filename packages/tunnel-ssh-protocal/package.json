@@ -1,16 +1,16 @@
 {
-  "name": "pilib-tunnel-browser",
-  "version": "1.1.0",
+  "name": "pilib-tunnel-ssh-protocol",
+  "version": "0.0.0",
   "files": [
     "dist"
   ],
   "main": "dist/index.js",
   "scripts": {
-    "dev": "ts-node -P tsconfig.json src/cli.ts",
-    "build": "rm -rf dist && tsc --outDir dist",
+    "build": "rm -rf dist/* && tsc --outDir dist",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
+    "ah-event-bus": "^1.0.8",
     "pilib-tunnel-core": "^1.1.0"
   },
   "devDependencies": {

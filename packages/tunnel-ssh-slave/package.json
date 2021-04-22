@@ -1,6 +1,6 @@
 {
-  "name": "pilib-tunnel-node",
-  "version": "1.1.0",
+  "name": "pilib-tunnel-ssh-slave",
+  "version": "0.0.0",
   "files": [
     "dist"
   ],
@@ -8,13 +8,16 @@
   "bin": "dist/cli.js",
   "scripts": {
     "dev": "ts-node -P tsconfig.json src/cli.ts",
-    "build": "rm -rf dist/* && tsc --outDir dist",
+    "build": "rm -rf dist && tsc --outDir dist",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
+    "ah-event-bus": "^1.0.8",
+    "ah-logger": "^0.1.4",
+    "node-pty": "^0.10.0",
     "pilib-tunnel-core": "^1.1.0",
-    "urllib": "^2.37.1",
-    "websocket": "^1.0.33",
+    "pilib-tunnel-node": "^1.1.0",
+    "pilib-tunnel-ssh-protocol": "0.0.0",
     "yargs": "^16.2.0"
   },
   "devDependencies": {

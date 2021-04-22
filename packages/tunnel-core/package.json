@@ -12,14 +12,9 @@
   },
   "dependencies": {
     "ah-event-bus": "^1.0.8",
-    "ah-logger": "^0.1.4",
-    "urllib": "^2.37.1",
-    "websocket": "^1.0.33",
-    "yargs": "^16.2.0"
+    "ah-logger": "^0.1.4"
   },
   "devDependencies": {
-    "@types/websocket": "^1.0.2",
-    "@types/yargs": "^16.0.1",
     "typescript": "^4.2.4"
   }
 }
