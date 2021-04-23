@@ -29,5 +29,6 @@
     "pilib-tunnel-node": "^2.0.2",
     "pilib-tunnel-ssh-protocol": "^1.0.2",
     "typescript": "^4.2.4"
-  }
+  },
+  "gitHead": "84a5032bf8564be2510129c3db407eb1edf7a2d1"
 }

@@ -20,5 +20,5 @@ const config: ITunnelConfig = {
 // 安全原因，从 env 中读取 session (命令行参数的 session 会被记录在 bash history 中)
 const adapter = createNodeAdapter(process.env.TUNNEL_SESSION || '');
 
-const tunnel = new Tunnel(config).setAdapter(adapter);
+const tunnel = new Tunnel(config, adapter);
 tunnel.connect();
