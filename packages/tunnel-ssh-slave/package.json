@@ -1,6 +1,6 @@
 {
   "name": "pilib-tunnel-ssh-slave",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "files": [
     "dist"
   ],
@@ -25,9 +25,9 @@
   "devDependencies": {
     "@types/websocket": "^1.0.2",
     "@types/yargs": "^16.0.1",
-    "pilib-tunnel-core": "^2.0.1",
-    "pilib-tunnel-node": "^2.0.2",
-    "pilib-tunnel-ssh-protocol": "^1.0.2",
+    "pilib-tunnel-core": "^2.0.2",
+    "pilib-tunnel-node": "^2.0.3",
+    "pilib-tunnel-ssh-protocol": "^1.0.3",
     "typescript": "^4.2.4"
   },
   "gitHead": "84a5032bf8564be2510129c3db407eb1edf7a2d1"
