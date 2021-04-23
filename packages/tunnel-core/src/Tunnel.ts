@@ -35,19 +35,10 @@ export type ITunnelStage =
   | { type: 'disconnected'; code: number; desc: string };
 
 export class Tunnel extends EventBus {
-  constructor(protected readonly cfg: ITunnelConfig) {
+  constructor(protected readonly cfg: ITunnelConfig, protected readonly adapter: ITunnelAdapter) {
     super();
     this.attachLogger();
   }
-
-  protected adapter: ITunnelAdapter = {
-    getTunnelToken: async () => {
-      throw new Error('adapter.getTunnelToken 未实现');
-    },
-    getWs: () => {
-      throw new Error('adapter.getWs 未实现');
-    },
-  };
 
   protected stageError(msg: string) {
     return new Error(`stage error: current=${this.stage.cur.type}, msg=${msg}`);
@@ -75,11 +66,6 @@ export class Tunnel extends EventBus {
       .on(TunnelMsgEvt, ev => logger.info(`receive: ${ev.dto.type}\n${ev.dto.sequelize()}`))
       .on(TunnelErrorEvt, ev => logger.error(ev.err.message))
       .on(ReconnectEvt, ev => logger.info(`reconnecting in ${ev.delay}ms`));
-  }
-
-  setAdapter(adapter: ITunnelAdapter) {
-    this.adapter = adapter;
-    return this;
   }
 
   /** 开始连接 */
@@ -149,7 +135,7 @@ export class Tunnel extends EventBus {
   }
 
   /** 断开连接 */
-  disconnect(code: number = 0, desc: string = 'close') {
+  disconnect(code: number = 1000, desc: string = 'close') {
     if (this.stage.cur.type === 'connect-success') {
       const { ws } = this.stage.cur;
 
@@ -173,9 +159,9 @@ export class Tunnel extends EventBus {
     }
   }
 
-  destroy() {
+  destroy(code?: number, desc?: string) {
     // 断开连接
-    this.disconnect();
+    this.disconnect(code, desc);
 
     // 关闭所有监听
     this.off();

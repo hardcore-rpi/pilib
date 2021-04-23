@@ -1,5 +1,5 @@
 import { createNodeAdapter } from 'pilib-tunnel-node';
-import { ITunnelConfig, FSM, StageChangeEvt } from 'pilib-tunnel-core';
+import { ITunnelConfig, FSM } from 'pilib-tunnel-core';
 import * as pty from 'node-pty';
 import { EventBus } from 'ah-event-bus';
 import { Logger } from 'ah-logger';
@@ -24,12 +24,12 @@ export class TunnelSSHSlave extends EventBus {
   start() {
     this.logger.info(`starting with ${JSON.stringify(this.cfg)}`);
 
-    const tunnel = new TunnelSSHProtocol({ ...this.cfg, protocol: 'ssh-slave' }).setAdapter(
+    const tunnel = new TunnelSSHProtocol(
+      { ...this.cfg, protocol: 'ssh-slave' },
       createNodeAdapter(process.env.TUNNEL_SESSION || '')
     );
 
     tunnel
-
       .on(SpawnEvt, ev => {
         if (this.st.cur.type === 'terminal-launched') {
           // reset 一遍

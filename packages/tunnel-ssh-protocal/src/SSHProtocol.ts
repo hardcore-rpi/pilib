@@ -1,4 +1,11 @@
-import { CommandDTO, DataTextDTO, ITunnelConfig, Tunnel, TunnelMsgEvt } from 'pilib-tunnel-core';
+import {
+  CommandDTO,
+  DataTextDTO,
+  ITunnelConfig,
+  Tunnel,
+  TunnelMsgEvt,
+  ITunnelAdapter,
+} from 'pilib-tunnel-core';
 import { BaseEvent } from 'ah-event-bus';
 
 export interface ISpawnCfg {
@@ -25,8 +32,8 @@ export class TerminalPrintEvt extends BaseEvent {
 }
 
 export class TunnelSSHProtocol extends Tunnel {
-  constructor(cfg: ITunnelConfig) {
-    super(cfg);
+  constructor(cfg: ITunnelConfig, adapter: ITunnelAdapter) {
+    super(cfg, adapter);
     this.init();
   }
 
