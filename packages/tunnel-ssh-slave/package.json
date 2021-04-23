@@ -1,6 +1,6 @@
 {
   "name": "pilib-tunnel-ssh-slave",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "files": [
     "dist"
   ],
@@ -13,8 +13,8 @@
   },
   "peerDependencies": {
     "pilib-tunnel-core": "^2.0.0",
-    "pilib-tunnel-ssh-protocol": "^1.0.0",
-    "pilib-tunnel-node": "^2.0.0"
+    "pilib-tunnel-node": "^2.0.0",
+    "pilib-tunnel-ssh-protocol": "^1.0.0"
   },
   "dependencies": {
     "ah-event-bus": "^1.0.8",
@@ -25,9 +25,9 @@
   "devDependencies": {
     "@types/websocket": "^1.0.2",
     "@types/yargs": "^16.0.1",
-    "typescript": "^4.2.4",
     "pilib-tunnel-core": "^2.0.0",
-    "pilib-tunnel-ssh-protocol": "^1.0.0",
-    "pilib-tunnel-node": "^2.0.0"
+    "pilib-tunnel-node": "^2.0.1",
+    "pilib-tunnel-ssh-protocol": "^1.0.1",
+    "typescript": "^4.2.4"
   }
 }
