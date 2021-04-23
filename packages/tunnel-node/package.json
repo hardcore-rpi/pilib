@@ -1,6 +1,6 @@
 {
   "name": "pilib-tunnel-node",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "files": [
     "dist"
   ],
@@ -22,7 +22,7 @@
   "devDependencies": {
     "@types/websocket": "^1.0.2",
     "@types/yargs": "^16.0.1",
-    "pilib-tunnel-core": "^2.0.2",
+    "pilib-tunnel-core": "^2.0.3",
     "typescript": "^4.2.4"
   },
   "gitHead": "4f0ec0aefb9cbef5154b6205a315ae7a249079fe"
