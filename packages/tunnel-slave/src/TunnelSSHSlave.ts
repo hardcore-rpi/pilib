@@ -1,5 +1,5 @@
 import { createNodeAdapter } from 'pilib-tunnel-node';
-import { ITunnelConfig, FSM } from 'pilib-tunnel-core';
+import { FSM } from 'pilib-tunnel-core';
 import * as pty from 'node-pty';
 import { EventBus } from 'ah-event-bus';
 import { Logger } from 'ah-logger';

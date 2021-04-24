@@ -9,7 +9,7 @@ export const createNodeAdapter = (session: string) => {
       const httpProtocol = cfg.secure ? 'https' : 'http';
 
       const resp = await curl<{ data: { token: string } }>(
-        `${httpProtocol}://${cfg.endpoint}/user/tunnelToken`,
+        `${httpProtocol}://${cfg.endpoint}/tunnelConnectToken`,
         { dataType: 'json', headers: { 'x-user-session': session } }
       );
 
