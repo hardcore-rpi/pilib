@@ -1,6 +1,6 @@
 {
-  "name": "pilib-tunnel-ssh-slave",
-  "version": "1.1.2",
+  "name": "pilib-tunnel-slave",
+  "version": "0.0.0",
   "files": [
     "dist"
   ],

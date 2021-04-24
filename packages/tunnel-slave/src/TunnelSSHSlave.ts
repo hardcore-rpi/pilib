@@ -5,10 +5,11 @@ import { EventBus } from 'ah-event-bus';
 import { Logger } from 'ah-logger';
 import { TunnelSSHProtocol, TerminalPrintEvt, SpawnEvt, LogEvt } from 'pilib-tunnel-ssh-protocol';
 import * as os from 'os';
+import { ITunnelSlaveCfg, ITunnelSlaveImpl } from './type';
 
-export type ITunnelSSHSlaveCfg = Omit<ITunnelConfig, 'protocol'>;
+export type ITunnelSSHSlaveCfg = ITunnelSlaveCfg;
 
-export class TunnelSSHSlave extends EventBus {
+export class TunnelSSHSlave extends EventBus implements ITunnelSlaveImpl {
   constructor(readonly cfg: ITunnelSSHSlaveCfg) {
     super();
   }
