@@ -1,7 +1,7 @@
 import { EventBus } from 'ah-event-bus';
 import { FSM } from './lib/FSM';
 import { TunnelMsgEvt, ReconnectEvt, StageChangeEvt, TunnelErrorEvt } from './event';
-import { BaseDTO, parseDTO } from './dto';
+import { BaseDTO, DTOPayload, parseDTO } from './dto';
 import { Logger } from 'ah-logger';
 
 export interface IWebsocket {
@@ -39,6 +39,8 @@ export class Tunnel extends EventBus {
     super();
     this.attachLogger();
   }
+
+  protected sendCnt = 0;
 
   protected stageError(msg: string) {
     return new Error(`stage error: current=${this.stage.cur.type}, msg=${msg}`);
@@ -106,10 +108,10 @@ export class Tunnel extends EventBus {
             let utf8Data = typeof msg.data === 'string' ? msg.data : undefined;
             if (!utf8Data) return;
 
-            const dto = parseDTO(utf8Data);
-            if (!dto) return;
+            const payload = DTOPayload.fromRaw(utf8Data);
+            if (!payload) return;
 
-            this.emit(new TunnelMsgEvt(dto));
+            this.emit(new TunnelMsgEvt(payload.dto, payload));
           };
 
           // 如果对方关闭连接，转入 disconnected
@@ -151,8 +153,8 @@ export class Tunnel extends EventBus {
   send(dto: BaseDTO) {
     if (this.stage.cur.type === 'connect-success') {
       const { ws } = this.stage.cur;
-      const msg = dto.sequelize();
-      ws.send(msg);
+      const payload = new DTOPayload(dto, { id: this.sendCnt++, timestamp: new Date().valueOf() });
+      ws.send(payload.sequelize());
       //
     } else {
       throw this.stageError('send');

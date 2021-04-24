@@ -5,6 +5,7 @@ import {
   Tunnel,
   TunnelMsgEvt,
   ITunnelAdapter,
+  DTOPayload,
 } from 'pilib-tunnel-core';
 import { BaseEvent } from 'ah-event-bus';
 
@@ -14,19 +15,23 @@ export interface ISpawnCfg {
 }
 
 export class SpawnEvt extends BaseEvent {
-  constructor(readonly cfg: ISpawnCfg) {
+  constructor(readonly cfg: ISpawnCfg, readonly payload: DTOPayload) {
     super();
   }
 }
 
 export class LogEvt extends BaseEvent {
-  constructor(readonly level: 'error' | 'info', readonly msg: string) {
+  constructor(
+    readonly level: 'error' | 'info',
+    readonly msg: string,
+    readonly payload: DTOPayload
+  ) {
     super();
   }
 }
 
 export class TerminalPrintEvt extends BaseEvent {
-  constructor(readonly data: string) {
+  constructor(readonly data: string, readonly payload: DTOPayload) {
     super();
   }
 }
@@ -43,11 +48,11 @@ export class TunnelSSHProtocol extends Tunnel {
         const cmd = ev.dto.cmd;
         const args = JSON.parse(ev.dto.args);
 
-        if (cmd === 'spawn') this.emit(new SpawnEvt(args));
-        if (cmd === 'log') this.emit(new LogEvt(args.level, args.msg));
+        if (cmd === 'spawn') this.emit(new SpawnEvt(args, ev.payload));
+        if (cmd === 'log') this.emit(new LogEvt(args.level, args.msg, ev.payload));
       }
 
-      if (ev.dto instanceof DataTextDTO) this.emit(new TerminalPrintEvt(ev.dto.value));
+      if (ev.dto instanceof DataTextDTO) this.emit(new TerminalPrintEvt(ev.dto.value, ev.payload));
     });
   }
 

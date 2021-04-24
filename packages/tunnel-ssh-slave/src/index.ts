@@ -4,6 +4,7 @@ import * as pty from 'node-pty';
 import { EventBus } from 'ah-event-bus';
 import { Logger } from 'ah-logger';
 import { TunnelSSHProtocol, TerminalPrintEvt, SpawnEvt, LogEvt } from 'pilib-tunnel-ssh-protocol';
+import * as os from 'os';
 
 export type ITunnelSSHSlaveCfg = Omit<ITunnelConfig, 'protocol'>;
 
@@ -35,6 +36,7 @@ export class TunnelSSHSlave extends EventBus {
           // reset 一遍
           const { terminal } = this.st.cur;
           terminal.kill();
+          tunnel.sendLog('info', 'current terminal killed (reset)');
         }
 
         const terminal = pty.spawn('/bin/bash', [], {
@@ -48,8 +50,18 @@ export class TunnelSSHSlave extends EventBus {
         terminal.onData(d => tunnel.sendTerminalPrint(d));
 
         terminal.onExit(({ exitCode, signal }) => {
-          tunnel.sendLog('error', `exitCode=${exitCode}, signal=${signal}`);
+          if (exitCode === 0) tunnel.sendLog('info', `terminal exit. signal=${signal}`);
+          else tunnel.sendLog('error', `exited with error: exitCode=${exitCode}, signal=${signal}`);
         });
+
+        // notice master
+        tunnel.sendLog('info', 'terminal spawned');
+        tunnel.sendLog('info', `platform: ${os.platform()}`);
+        tunnel.sendLog('info', `arch: ${os.arch()}`);
+        os.cpus().forEach((ci, i) => {
+          tunnel.sendLog('info', `cpu[${i}]: ${ci.model}@${ci.speed}MHz`);
+        });
+        tunnel.sendLog('info', `totalmem: ${os.totalmem()}`);
 
         this.st.transform({ type: 'terminal-launched', terminal });
       })

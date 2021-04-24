@@ -1,6 +1,6 @@
 import { ITunnelStage } from './Tunnel';
 import { BaseEvent } from 'ah-event-bus';
-import { BaseDTO } from './dto';
+import { BaseDTO, DTOPayload } from './dto';
 
 export class StageChangeEvt extends BaseEvent {
   constructor(readonly from: ITunnelStage, readonly to: ITunnelStage) {
@@ -9,7 +9,7 @@ export class StageChangeEvt extends BaseEvent {
 }
 
 export class TunnelMsgEvt extends BaseEvent {
-  constructor(readonly dto: BaseDTO) {
+  constructor(readonly dto: BaseDTO, readonly payload: DTOPayload) {
     super();
   }
 }
