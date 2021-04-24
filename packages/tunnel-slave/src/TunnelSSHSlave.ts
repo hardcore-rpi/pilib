@@ -6,6 +6,7 @@ import { Logger } from 'ah-logger';
 import { TunnelSSHProtocol, TerminalPrintEvt, SpawnEvt, LogEvt } from 'pilib-tunnel-ssh-protocol';
 import * as os from 'os';
 import { ITunnelSlaveCfg, ITunnelSlaveImpl } from './type';
+import { version } from '../package.json';
 
 export type ITunnelSSHSlaveCfg = ITunnelSlaveCfg;
 
@@ -55,12 +56,13 @@ export class TunnelSSHSlave extends EventBus implements ITunnelSlaveImpl {
           else tunnel.sendLog('error', `exited with error: exitCode=${exitCode}, signal=${signal}`);
         });
 
+        tunnel.sendLog('info', `v${version} terminal spawned`);
+
         // notice master
         const sysInfo = [
-          'terminal spawned',
           `platform: ${os.platform()}`,
           `arch: ${os.arch()}`,
-          `totalmem: ${os.totalmem()}`,
+          `totalmem: ${(os.totalmem() / 1024 / 1024 / 1024).toFixed(2)}G`,
           ...os.cpus().map((ci, i, _l) => `cpu(${i + 1}/${_l.length}): ${ci.model}@${ci.speed}MHz`),
         ].join('\n');
 
