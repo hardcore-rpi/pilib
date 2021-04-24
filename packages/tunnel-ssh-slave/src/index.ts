@@ -55,13 +55,15 @@ export class TunnelSSHSlave extends EventBus {
         });
 
         // notice master
-        tunnel.sendLog('info', 'terminal spawned');
-        tunnel.sendLog('info', `platform: ${os.platform()}`);
-        tunnel.sendLog('info', `arch: ${os.arch()}`);
-        os.cpus().forEach((ci, i) => {
-          tunnel.sendLog('info', `cpu[${i}]: ${ci.model}@${ci.speed}MHz`);
-        });
-        tunnel.sendLog('info', `totalmem: ${os.totalmem()}`);
+        const sysInfo = [
+          'terminal spawned',
+          `platform: ${os.platform()}`,
+          `arch: ${os.arch()}`,
+          `totalmem: ${os.totalmem()}`,
+          ...os.cpus().map((ci, i, _l) => `cpu(${i + 1}/${_l.length}): ${ci.model}@${ci.speed}MHz`),
+        ].join('\n');
+
+        tunnel.sendLog('info', sysInfo);
 
         this.st.transform({ type: 'terminal-launched', terminal });
       })
