@@ -29,7 +29,7 @@ export class TunnelSSHSlave extends EventBus implements ITunnelSlaveImpl {
 
     const tunnel = new TunnelSSHProtocol(
       { ...this.cfg, protocol: 'ssh-slave' },
-      createNodeAdapter(process.env.TUNNEL_SESSION || '')
+      createNodeAdapter(this.cfg.session)
     );
 
     tunnel
