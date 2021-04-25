@@ -71,7 +71,7 @@ yargs
     '软件升级',
     () => {},
     () => {
-      execSync(`cnpm i pilib-tunnel-agent -g`);
+      execSync(`cnpm i pt-agent -g`);
     }
   )
   // terminal 子命令
