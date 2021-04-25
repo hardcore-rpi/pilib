@@ -7,6 +7,7 @@ import * as yml from 'js-yaml';
 import * as path from 'path';
 import { writeFileSync, readFileSync, existsSync } from 'fs';
 import { Config } from './config';
+import * as pkg from '../package.json';
 
 const defaultName = execSync('uname -a', { encoding: 'utf-8' });
 const CONFIG_PATH = path.resolve(process.env.HOME!, '.pilib-tunnel-agent.yml');
@@ -30,6 +31,7 @@ const updateCfg = (cfg: Partial<IConfig>): IConfig => {
 };
 
 yargs
+  // auth
   .command(
     'auth',
     '设置登录 session',
@@ -42,6 +44,7 @@ yargs
       }
     }
   )
+  // config
   .command(
     'config',
     '配置',
@@ -62,6 +65,15 @@ yargs
         console.log(CONFIG_PATH);
         return;
       }
+    }
+  )
+  // upgrade
+  .command(
+    'upgrade',
+    '软件升级',
+    () => {},
+    () => {
+      execSync(`cnpm i ${pkg} -g`);
     }
   )
   // terminal 子命令
