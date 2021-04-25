@@ -8,7 +8,6 @@ import * as path from 'path';
 import { writeFileSync, readFileSync, existsSync } from 'fs';
 import { Config } from './config';
 
-const defaultName = execSync('uname -a', { encoding: 'utf-8' });
 const CONFIG_PATH = path.resolve(process.env.HOME!, '.pilib-tunnel-agent.yml');
 
 interface IConfig {
