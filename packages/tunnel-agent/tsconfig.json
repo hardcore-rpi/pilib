@@ -2,8 +2,7 @@
   "compilerOptions": {
     "target": "ES5",
     "strict": true,
-    "declaration": true,
-    "resolveJsonModule": true
+    "declaration": true
   },
   "include": ["src"]
 }
