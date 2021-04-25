@@ -8,7 +8,7 @@ import * as path from 'path';
 import { writeFileSync, readFileSync, existsSync } from 'fs';
 import { Config } from './config';
 
-const CONFIG_PATH = path.resolve(process.env.HOME!, '.pilib-tunnel-agent.yml');
+const CONFIG_PATH = path.resolve(process.env.HOME!, '.pt-agent.yml');
 
 interface IConfig {
   session?: string;
