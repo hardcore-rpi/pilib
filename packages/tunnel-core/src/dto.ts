@@ -18,8 +18,8 @@ export abstract class BaseDTO {
 /** 文本传输对象 */
 export class DataTextDTO extends BaseDTO {
   static fromRaw(input: string) {
-    const { type, ...rest } = JSON.parse(input);
-    return type === 'data-text' ? new DataTextDTO(rest.value) : null;
+    const { type, namespace, ...rest } = JSON.parse(input);
+    return type === 'data-text' ? new DataTextDTO(rest.value).setNamespace(namespace) : null;
   }
 
   type = 'data-text';
@@ -36,8 +36,10 @@ export class DataTextDTO extends BaseDTO {
 /** 二进制传输对象 */
 export class DataBinaryDTO extends BaseDTO {
   static fromRaw(input: string) {
-    const { type, ...rest } = JSON.parse(input);
-    return type === 'data-binary' ? new DataBinaryDTO(Buffer.from(rest.value, 'base64')) : null;
+    const { type, namespace, ...rest } = JSON.parse(input);
+    return type === 'data-binary'
+      ? new DataBinaryDTO(Buffer.from(rest.value, 'base64')).setNamespace(namespace)
+      : null;
   }
 
   type = 'data-binary';
