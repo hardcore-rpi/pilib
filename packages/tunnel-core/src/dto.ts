@@ -10,7 +10,7 @@ export abstract class BaseDTO {
   }
 
   sequelize() {
-    const data = { type: this.type, ...this.getExtraSeqData() };
+    const data = { type: this.type, namespace: this.namespace, ...this.getExtraSeqData() };
     return JSON.stringify(data);
   }
 }

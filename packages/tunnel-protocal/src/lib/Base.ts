@@ -10,7 +10,7 @@ export abstract class BaseProtocol<T> {
 
   init() {
     this.tunnel.on(TunnelMsgEvt, ev => {
-      if (ev.dto.namespace !== 'terminal') return;
+      if (ev.dto.namespace !== this.namespace) return;
       this.handleTunnelMsgEvt(ev);
     });
   }
