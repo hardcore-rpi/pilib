@@ -2,27 +2,26 @@ export abstract class BaseDTO {
   abstract readonly type: string;
   abstract getExtraSeqData(): any;
 
+  namespace = '';
+
+  setNamespace(ns: string) {
+    this.namespace = ns;
+    return this;
+  }
+
   sequelize() {
     const data = { type: this.type, ...this.getExtraSeqData() };
     return JSON.stringify(data);
   }
 }
 
-/** 指令传输对象 */
-export class CommandDTO extends BaseDTO {
-  type = 'command';
-
-  constructor(readonly cmd: string, readonly args: string) {
-    super();
-  }
-
-  getExtraSeqData() {
-    return { cmd: this.cmd, args: this.args };
-  }
-}
-
 /** 文本传输对象 */
 export class DataTextDTO extends BaseDTO {
+  static fromRaw(input: string) {
+    const { type, ...rest } = JSON.parse(input);
+    return type === 'data-text' ? new DataTextDTO(rest.value) : null;
+  }
+
   type = 'data-text';
 
   constructor(readonly value: string) {
@@ -36,6 +35,11 @@ export class DataTextDTO extends BaseDTO {
 
 /** 二进制传输对象 */
 export class DataBinaryDTO extends BaseDTO {
+  static fromRaw(input: string) {
+    const { type, ...rest } = JSON.parse(input);
+    return type === 'data-binary' ? new DataBinaryDTO(Buffer.from(rest.value, 'base64')) : null;
+  }
+
   type = 'data-binary';
 
   constructor(readonly value: Buffer) {
@@ -48,13 +52,7 @@ export class DataBinaryDTO extends BaseDTO {
 }
 
 export const parseDTO = (input: string): BaseDTO | null => {
-  const { type, ...rest } = JSON.parse(input);
-
-  if (type === 'command') return new CommandDTO(rest.cmd, rest.args);
-  if (type === 'data-text') return new DataTextDTO(rest.value);
-  if (type === 'data-binary') return new DataBinaryDTO(Buffer.from(rest.value, 'base64'));
-
-  return null;
+  return DataTextDTO.fromRaw(input) || DataBinaryDTO.fromRaw(input);
 };
 
 export class DTOPayload {

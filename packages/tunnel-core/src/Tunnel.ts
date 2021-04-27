@@ -25,6 +25,18 @@ export interface ITunnelAdapter {
   getWs(url: string, protocol: string, meta: { cfg: ITunnelConfig }): IWebsocket;
 }
 
+export type ISendMsgData =
+  | {
+      type: 'text';
+      value: string;
+    }
+  | {
+      type: 'binary';
+      value: Buffer;
+    };
+
+export type IReceiveMsgData = ISendMsgData & { id: number; timestamp: number };
+
 export type ITunnelStage =
   | { type: 'init' }
   | { type: 'auth-checking' }
@@ -155,7 +167,6 @@ export class Tunnel extends EventBus {
       const { ws } = this.stage.cur;
       const payload = new DTOPayload(dto, { id: this.sendCnt++, timestamp: new Date().valueOf() });
       ws.send(payload.sequelize());
-      //
     } else {
       throw this.stageError('send');
     }

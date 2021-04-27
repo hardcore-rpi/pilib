@@ -18,7 +18,7 @@
     "node-pty": "^0.10.0",
     "pilib-tunnel-core": "^2.0.0",
     "pilib-tunnel-node": "^2.1.1",
-    "pilib-tunnel-ssh-protocol": "^1.0.0",
+    "pilib-tunnel-protocol": "^1.0.0",
     "yargs": "^16.2.0"
   },
   "devDependencies": {

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import * as yargs from 'yargs';
-import { TunnelSSHSlave } from './index';
+import { Agent } from './index';
 import { execSync } from 'child_process';
 import * as yml from 'js-yaml';
 import * as path from 'path';
@@ -16,7 +16,7 @@ interface IConfig {
 
 const readCfg = (): IConfig => {
   if (!existsSync(CONFIG_PATH)) writeFileSync(CONFIG_PATH, '', { encoding: 'utf-8' });
-  return yml.load(readFileSync(CONFIG_PATH, { encoding: 'utf-8' })) as any;
+  return (yml.load(readFileSync(CONFIG_PATH, { encoding: 'utf-8' })) as any) || {};
 };
 
 const updateCfg = (cfg: Partial<IConfig>): IConfig => {
@@ -76,8 +76,8 @@ yargs
   )
   // terminal 子命令
   .command(
-    'terminal',
-    '命令行终端代理',
+    'start',
+    '启动代理',
     _y => {
       return _y
         .option('endpoint', { type: 'string', desc: '通道连接地址' })
@@ -87,6 +87,6 @@ yargs
     },
     args => {
       const config = new Config().update(readCfg()).update(args);
-      new TunnelSSHSlave(config).start();
+      new Agent(config).start();
     }
   ).argv;

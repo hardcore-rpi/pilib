@@ -1,5 +1,5 @@
 {
-  "name": "pilib-tunnel-ssh-protocol",
+  "name": "pilib-tunnel-protocol",
   "version": "1.1.0",
   "files": [
     "dist"
