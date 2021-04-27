@@ -80,6 +80,14 @@ export class Agent extends EventBus {
       this.tunnel.terminal.send({ type: 'log', level: 'info', msg: sysInfo });
 
       this.st.terminal.transform({ type: 'launched', terminal });
+      //
+    } else if (ev.msg.type === 'print') {
+      if (this.st.terminal.cur.type === 'launched') {
+        this.st.terminal.cur.terminal.write(ev.msg.data);
+      }
+      //
+    } else if (ev.msg.type === 'log') {
+      this.logger.info(`terminal log: ${ev.msg.level} ${ev.msg.msg}`);
     }
   };
 
