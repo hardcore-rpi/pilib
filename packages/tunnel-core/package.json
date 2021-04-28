@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "ts-node -P tsconfig.json src/run.ts",
     "build": "rm -rf dist/* && tsc -p tsconfig.json --outDir dist",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "postpublish": "cnpm sync pilib-tunnel-core"
   },
   "dependencies": {
     "ah-event-bus": "^1.0.8",

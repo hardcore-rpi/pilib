@@ -1,25 +1,22 @@
 #!/usr/bin/env node
 
 import * as yargs from 'yargs';
-import { Agent } from './index';
+import { Agent, IAgentCfg } from './index';
 import { execSync } from 'child_process';
 import * as yml from 'js-yaml';
 import * as path from 'path';
 import { writeFileSync, readFileSync, existsSync } from 'fs';
 import { Config } from './config';
+import * as inquirer from 'inquirer';
 
 const CONFIG_PATH = path.resolve(process.env.HOME!, '.pt-agent.yml');
 
-interface IConfig {
-  session?: string;
-}
-
-const readCfg = (): IConfig => {
+const readCfg = (): IAgentCfg => {
   if (!existsSync(CONFIG_PATH)) writeFileSync(CONFIG_PATH, '', { encoding: 'utf-8' });
   return (yml.load(readFileSync(CONFIG_PATH, { encoding: 'utf-8' })) as any) || {};
 };
 
-const updateCfg = (cfg: Partial<IConfig>): IConfig => {
+const updateCfg = (cfg: Partial<IAgentCfg>): IAgentCfg => {
   const lastCfg = readCfg();
   const newCfg = { ...lastCfg, ...cfg };
 
@@ -48,6 +45,7 @@ yargs
     '配置',
     _y => {
       return _y
+        .option('init', { type: 'boolean', desc: '初始化配置' })
         .option('show', { type: 'boolean', desc: '打印配置' })
         .option('path', { type: 'boolean', desc: '打印配置文件地址' })
         .help();
@@ -63,6 +61,23 @@ yargs
         console.log(CONFIG_PATH);
         return;
       }
+
+      if (args.init) {
+        const cfg = new Config().update(readCfg());
+
+        inquirer
+          .prompt<{ name: string; session: string }>([
+            { type: 'input', name: 'name', message: '设备名', default: cfg.name },
+            { type: 'input', name: 'session', message: '登录 session', default: cfg.session },
+          ])
+          .then(ans => {
+            updateCfg(ans);
+          })
+          .catch(err => {
+            console.error(err);
+            process.exit(1);
+          });
+      }
     }
   )
   // upgrade
@@ -74,7 +89,7 @@ yargs
       execSync(`cnpm i pt-agent -g`);
     }
   )
-  // terminal 子命令
+  // start
   .command(
     'start',
     '启动代理',

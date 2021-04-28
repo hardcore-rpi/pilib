@@ -9,11 +9,13 @@
   "scripts": {
     "dev": "ts-node -P tsconfig.json src/cli.ts",
     "build": "rm -rf dist && tsc --outDir dist",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "postpublish": "cnpm sync pt-agent"
   },
   "dependencies": {
     "ah-event-bus": "^1.0.8",
     "ah-logger": "^0.1.4",
+    "inquirer": "^8.0.0",
     "js-yaml": "^4.1.0",
     "node-pty": "^0.10.0",
     "pilib-tunnel-core": "^2.1.3",
@@ -22,6 +24,7 @@
     "yargs": "^16.2.0"
   },
   "devDependencies": {
+    "@types/inquirer": "^7.3.1",
     "@types/js-yaml": "^4.0.1",
     "@types/websocket": "^1.0.2",
     "@types/yargs": "^16.0.1",

@@ -22,6 +22,7 @@ export type ISystemMsgValue =
   | {
       type: 'inspect-dynamic-rsp';
       freemem: number;
+      usemem: number;
       loadavg: number[];
     }
   | {

@@ -102,10 +102,14 @@ export class Agent extends EventBus {
       });
       //
     } else if (ev.msg.type === 'inspect-dynamic-req') {
+      const totalmem = os.totalmem();
+      const freemem = os.freemem();
+
       this.tunnel.system.send({
         type: 'inspect-dynamic-rsp',
-        freemem: os.freemem(),
+        freemem,
         loadavg: os.loadavg(),
+        usemem: totalmem - freemem,
       });
       //
     } else if (ev.msg.type === 'invoke-req') {
