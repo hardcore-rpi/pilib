@@ -67,7 +67,10 @@ export class DTOPayload {
     return new DTOPayload(dto, meta);
   }
 
-  constructor(readonly dto: BaseDTO, readonly meta: { id: number; timestamp: number }) {}
+  constructor(
+    readonly dto: BaseDTO,
+    readonly meta: { id: number; timestamp: number; stateFlag?: string }
+  ) {}
 
   sequelize() {
     return JSON.stringify({

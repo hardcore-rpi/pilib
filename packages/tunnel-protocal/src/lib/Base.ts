@@ -15,7 +15,7 @@ export abstract class BaseProtocol<T> {
     });
   }
 
-  send(msg: T) {
-    this.tunnel.send(new DataTextDTO(JSON.stringify(msg)).setNamespace(this.namespace));
+  send(msg: T, meta?: { stateFlag?: string }) {
+    this.tunnel.send(new DataTextDTO(JSON.stringify(msg)).setNamespace(this.namespace), meta);
   }
 }

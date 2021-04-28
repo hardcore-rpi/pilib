@@ -162,10 +162,14 @@ export class Tunnel extends EventBus {
     }
   }
 
-  send(dto: BaseDTO) {
+  send(dto: BaseDTO, meta?: { stateFlag?: string }) {
     if (this.stage.cur.type === 'connect-success') {
       const { ws } = this.stage.cur;
-      const payload = new DTOPayload(dto, { id: this.sendCnt++, timestamp: new Date().valueOf() });
+      const payload = new DTOPayload(dto, {
+        id: this.sendCnt++,
+        timestamp: new Date().valueOf(),
+        stateFlag: meta?.stateFlag,
+      });
       ws.send(payload.sequelize());
     } else {
       throw this.stageError('send');
