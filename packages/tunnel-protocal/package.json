@@ -1,6 +1,6 @@
 {
   "name": "pilib-tunnel-protocol",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "files": [
     "dist"
   ],
@@ -17,7 +17,7 @@
     "ah-event-bus": "^1.0.8"
   },
   "devDependencies": {
-    "pilib-tunnel-core": "^2.1.3",
+    "pilib-tunnel-core": "^2.1.4",
     "typescript": "^4.2.4"
   },
   "gitHead": "4f0ec0aefb9cbef5154b6205a315ae7a249079fe"
