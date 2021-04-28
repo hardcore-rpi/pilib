@@ -5,7 +5,7 @@ import { EventBus } from 'ah-event-bus';
 import { Logger } from 'ah-logger';
 import { TunnelProtocol, ITunnelConfig, TerminalEvent, SystemEvent } from 'pilib-tunnel-protocol';
 import * as os from 'os';
-import { exec } from 'child_process';
+import { exec, execSync } from 'child_process';
 
 export type IAgentCfg = Omit<ITunnelConfig, 'protocol'> & { session: string };
 
@@ -99,6 +99,8 @@ export class Agent extends EventBus {
         platform: os.platform(),
         totalmem: os.totalmem(),
         cups: os.cpus(),
+        opSystem: execSync('uname -a').toString('utf-8'),
+        networkInterface: os.networkInterfaces() as any,
       });
       //
     } else if (ev.msg.type === 'inspect-dynamic-req') {
