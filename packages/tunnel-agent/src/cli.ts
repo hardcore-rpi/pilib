@@ -86,7 +86,7 @@ yargs
     '软件升级',
     () => {},
     () => {
-      execSync(`cnpm i pt-agent -g`);
+      execSync(`cnpm i pt-agent -g`, { stdio: 'inherit' });
     }
   )
   // start
