@@ -1,140 +1,80 @@
 import { createNodeAdapter } from 'pilib-tunnel-node';
-import { FSM } from 'pilib-tunnel-core';
-import * as pty from 'node-pty';
 import { EventBus } from 'ah-event-bus';
 import { Logger } from 'ah-logger';
-import { TunnelProtocol, ITunnelConfig, TerminalEvent, SystemEvent } from 'pilib-tunnel-protocol';
-import * as os from 'os';
-import { exec, execSync } from 'child_process';
+import { TunnelProtocol, ITunnelConfig, StageChangeEvt } from 'pilib-tunnel-protocol';
+import { Terminal } from './module/Terminal';
+import { BaseModule } from './module/base';
+import { System } from './module/System';
+import { randomString } from './util';
+import { PingEvent } from 'pilib-tunnel-protocol/dist/lib/Ping';
 
 export type IAgentCfg = Omit<ITunnelConfig, 'protocol'> & { session: string };
+
+const PING_TIMEOUT = 60e3;
 
 export class Agent extends EventBus {
   constructor(readonly cfg: IAgentCfg) {
     super();
   }
 
-  protected tunnel = new TunnelProtocol(
+  tunnel = new TunnelProtocol(
     { ...this.cfg, protocol: 'common-agent' },
     createNodeAdapter(this.cfg.session)
   );
 
-  protected logger = new Logger('Agent');
+  logger = new Logger('Agent');
 
-  protected st = {
-    terminal: new FSM<{ type: 'init' } | { type: 'launched'; terminal: pty.IPty }>(
-      { type: 'init' },
-      () => {}
-    ),
-  };
+  killerInfo: {
+    timer?: NodeJS.Timeout;
+    stateFlag?: string;
+  } = {};
 
-  protected handleTerminalEvt = (ev: TerminalEvent) => {
-    if (ev.msg.type === 'spawn') {
-      if (this.st.terminal.cur.type === 'launched') {
-        // reset 一遍
-        const { terminal } = this.st.terminal.cur;
-        terminal.kill();
-        this.tunnel.terminal.send({
-          type: 'log',
-          level: 'info',
-          msg: 'current terminal killed (reset)',
-        });
-      }
+  protected modules: BaseModule[] = [new Terminal(this), new System(this)];
 
-      const terminal = pty.spawn('/bin/bash', [], {
-        name: 'xterm-color',
-        cols: ev.msg.cfg.cols,
-        rows: ev.msg.cfg.rows,
-        cwd: process.env.HOME,
-        env: process.env as any,
-      });
-
-      terminal.onData(data => this.tunnel.terminal.send({ type: 'print', data }));
-
-      terminal.onExit(({ exitCode, signal }) => {
-        if (exitCode === 0) {
-          this.tunnel.terminal.send({
-            type: 'log',
-            level: 'info',
-            msg: `terminal exit. signal=${signal}`,
-          });
-        } else {
-          this.tunnel.terminal.send({
-            type: 'log',
-            level: 'error',
-            msg: `exited with error: exitCode=${exitCode}, signal=${signal}`,
-          });
-        }
-      });
-
-      this.tunnel.terminal.send({ type: 'log', level: 'info', msg: `terminal spawned` });
-
-      // notice master
-      const sysInfo = [
-        `platform: ${os.platform()}`,
-        `arch: ${os.arch()}`,
-        `totalmem: ${(os.totalmem() / 1024 / 1024 / 1024).toFixed(2)}G`,
-        ...os.cpus().map((ci, i, _l) => `cpu(${i + 1}/${_l.length}): ${ci.model}@${ci.speed}MHz`),
-      ].join('\n');
-
-      this.tunnel.terminal.send({ type: 'log', level: 'info', msg: sysInfo });
-
-      this.st.terminal.transform({ type: 'launched', terminal });
-      //
-    } else if (ev.msg.type === 'print') {
-      if (this.st.terminal.cur.type === 'launched') {
-        this.st.terminal.cur.terminal.write(ev.msg.data);
-      }
-      //
-    } else if (ev.msg.type === 'log') {
-      this.logger.info(`terminal log: ${ev.msg.level} ${ev.msg.msg}`);
+  protected stopDelayKiller() {
+    if (this.killerInfo.timer) {
+      clearTimeout(this.killerInfo.timer);
+      this.killerInfo.timer = undefined;
     }
-  };
+  }
 
-  protected handleSystemEvt = (ev: SystemEvent) => {
-    if (ev.msg.type === 'inspect-static-req') {
-      this.tunnel.system.send({
-        type: 'inspect-static-rsp',
-        arch: os.arch(),
-        platform: os.platform(),
-        totalmem: os.totalmem(),
-        cups: os.cpus(),
-        opSystem: execSync('uname -a').toString('utf-8'),
-        networkInterface: os.networkInterfaces() as any,
-      });
-      //
-    } else if (ev.msg.type === 'inspect-dynamic-req') {
-      const totalmem = os.totalmem();
-      const freemem = os.freemem();
+  protected restartDelayKiller() {
+    this.stopDelayKiller();
 
-      this.tunnel.system.send({
-        type: 'inspect-dynamic-rsp',
-        freemem,
-        loadavg: os.loadavg(),
-        usemem: totalmem - freemem,
-      });
-      //
-    } else if (ev.msg.type === 'invoke-req') {
-      const process = exec(ev.msg.cmd, (err, stdout, stderr) => {
-        this.tunnel.system.send({
-          type: 'invoke-rsp',
-          stdout,
-          stderr,
-          exitCode: err?.code || 0,
-        });
-      });
+    this.killerInfo.timer = setTimeout(() => {
+      this.logger.info('killer timeout');
+      this.modules.forEach(m => m.stop());
+    }, PING_TIMEOUT * 0.8);
+  }
 
-      // 超时 kill
-      setTimeout(() => {
-        !process.killed && process.kill();
-      }, 10e3);
+  protected sendPing() {
+    const stateFlag = randomString(4);
+
+    this.killerInfo.stateFlag = stateFlag;
+    this.tunnel.ping.send({ type: 'ping' }, { stateFlag });
+    this.logger.info('send PING');
+
+    this.restartDelayKiller();
+  }
+
+  protected handlerPingEvt = (ev: PingEvent) => {
+    if (ev.msg.type === 'pong') {
+      if (ev.meta.payload.meta.stateFlag === this.killerInfo.stateFlag) {
+        this.stopDelayKiller();
+      }
     }
   };
 
   start() {
-    this.tunnel.on(TerminalEvent, this.handleTerminalEvt);
-    this.tunnel.on(SystemEvent, this.handleSystemEvt);
+    this.tunnel
+      .on(StageChangeEvt, ev => {
+        if (ev.to.type === 'connect-success') {
+          setInterval(() => this.sendPing(), PING_TIMEOUT);
+        }
+      })
+      .on(PingEvent, this.handlerPingEvt);
 
+    this.modules.forEach(m => m.start());
     this.tunnel.connect();
   }
 }
