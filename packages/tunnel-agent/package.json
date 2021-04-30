@@ -1,6 +1,6 @@
 {
   "name": "pt-agent",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "files": [
     "dist"
   ],
@@ -20,7 +20,7 @@
     "node-pty": "^0.10.0",
     "pilib-tunnel-core": "^2.1.4",
     "pilib-tunnel-node": "^2.1.5",
-    "pilib-tunnel-protocol": "^2.0.4",
+    "pilib-tunnel-protocol": "^2.1.0",
     "yargs": "^16.2.0"
   },
   "devDependencies": {

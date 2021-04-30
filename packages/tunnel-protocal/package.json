@@ -1,6 +1,6 @@
 {
   "name": "pilib-tunnel-protocol",
-  "version": "2.0.4",
+  "version": "2.1.0",
   "files": [
     "dist"
   ],
