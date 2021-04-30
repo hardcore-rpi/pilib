@@ -66,10 +66,15 @@ export class Agent extends EventBus {
   };
 
   start() {
+    let pingTimer: NodeJS.Timeout;
+
     this.tunnel
       .on(StageChangeEvt, ev => {
         if (ev.to.type === 'connect-success') {
-          setInterval(() => this.sendPing(), PING_TIMEOUT);
+          pingTimer = setInterval(() => this.sendPing(), PING_TIMEOUT);
+          //
+        } else if (ev.to.type === 'disconnected') {
+          pingTimer && clearInterval(pingTimer);
         }
       })
       .on(PingEvent, this.handlerPingEvt);
