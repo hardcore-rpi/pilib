@@ -1,5 +1,5 @@
 import { BaseController, IApplication, IContext, IRouterMeta } from 'ah-server';
-import { CapturerUpdateEvt } from '../Event';
+import { CapturerFrameEvt } from '../Event';
 
 /** 触发拍照 */
 export class ShotController extends BaseController {
@@ -20,13 +20,13 @@ export class ShotController extends BaseController {
     },
   ];
 
-  private capturerEvt?: CapturerUpdateEvt;
+  private capturerEvt?: CapturerFrameEvt;
 
   constructor(app: IApplication) {
     super(app);
 
-    const update = (evt: CapturerUpdateEvt) => (this.capturerEvt = evt);
-    this.app.on(CapturerUpdateEvt, update);
+    const update = (evt: CapturerFrameEvt) => (this.capturerEvt = evt);
+    this.app.on(CapturerFrameEvt, update);
   }
 
   async shot(ctx: IContext, query: { upload?: string; detect?: string }) {

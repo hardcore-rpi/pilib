@@ -1,5 +1,5 @@
 import { BaseController, IContext, IRouterMeta } from 'ah-server';
-import { CapturerUpdateEvt } from '../Event';
+import { CapturerFrameEvt } from '../Event';
 import { LiveStream } from '../LiveStream';
 
 export class LiveStreamController extends BaseController {
@@ -18,13 +18,13 @@ export class LiveStreamController extends BaseController {
       ctx.app.config.CAMERA_FRAME_RATE
     );
 
-    const update = ({ detector }: CapturerUpdateEvt) => {
+    const update = ({ detector }: CapturerFrameEvt) => {
       streamIns.update(detector.mark().markedSnapshot);
     };
-    ctx.app.on(CapturerUpdateEvt, update);
+    ctx.app.on(CapturerFrameEvt, update);
 
     const clearUp = () => {
-      ctx.app.off(CapturerUpdateEvt, update);
+      ctx.app.off(CapturerFrameEvt, update);
       streamIns.dispose();
     };
 

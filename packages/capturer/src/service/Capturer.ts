@@ -1,6 +1,6 @@
 import { BaseService } from 'ah-server';
 import { Detector } from '../Detector';
-import { CapturerUpdateEvt } from '../Event';
+import { CapturerFaceInEvt, CapturerFrameEvt } from '../Event';
 
 declare module 'ah-server' {
   interface IService {
@@ -37,7 +37,7 @@ export class Capturer extends BaseService {
         roi: this.getRoi(),
       });
 
-      this.app.emit(CapturerUpdateEvt, { snapshot, detector } as CapturerUpdateEvt);
+      this.app.emit(CapturerFrameEvt, { snapshot, detector } as CapturerFrameEvt);
 
       const { detection } = detector.detect();
 
@@ -62,7 +62,11 @@ export class Capturer extends BaseService {
         if (faceIn) {
           // 有人进入画面，上传
           const { markedSnapshot } = detector.mark();
-          await this.service.uploader.upload(markedSnapshot);
+          this.app.emit(CapturerFaceInEvt, {
+            snapshot,
+            markedSnapshot,
+            detector,
+          } as CapturerFaceInEvt);
         }
       }
     } catch (e) {

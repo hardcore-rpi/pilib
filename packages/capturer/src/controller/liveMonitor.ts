@@ -1,5 +1,5 @@
 import { BaseController, IApplication, IContext, IRouterMeta } from 'ah-server';
-import { CapturerUpdateEvt } from '../Event';
+import { CapturerFrameEvt } from '../Event';
 
 export class LiveMonitorController extends BaseController {
   mapper: IRouterMeta[] = [
@@ -10,13 +10,13 @@ export class LiveMonitorController extends BaseController {
     },
   ];
 
-  private capturerEvt?: CapturerUpdateEvt;
+  private capturerEvt?: CapturerFrameEvt;
 
   constructor(app: IApplication) {
     super(app);
 
-    const update = (evt: CapturerUpdateEvt) => (this.capturerEvt = evt);
-    this.app.on(CapturerUpdateEvt, update);
+    const update = (evt: CapturerFrameEvt) => (this.capturerEvt = evt);
+    this.app.on(CapturerFrameEvt, update);
   }
 
   async getSnapshot(ctx: IContext) {
