@@ -1,9 +1,9 @@
-import { Controller, IContext, IControllerMapperItem } from 'ah-server';
+import { BaseController, IContext, IRouterMeta } from 'ah-server';
 import { CapturerUpdateEvt } from '../Event';
 import { LiveStream } from '../LiveStream';
 
-export class LiveStreamController extends Controller {
-  mapper: IControllerMapperItem[] = [
+export class LiveStreamController extends BaseController {
+  mapper: IRouterMeta[] = [
     {
       path: '/liveStream',
       method: 'GET',

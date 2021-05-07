@@ -1,8 +1,8 @@
-import { Controller, IContext, IControllerMapperItem } from 'ah-server';
+import { BaseController, IApplication, IContext, IRouterMeta } from 'ah-server';
 import { CapturerUpdateEvt } from '../Event';
 
-export class LiveMonitorController extends Controller {
-  mapper: IControllerMapperItem[] = [
+export class LiveMonitorController extends BaseController {
+  mapper: IRouterMeta[] = [
     {
       path: '/live',
       method: 'GET',
@@ -11,15 +11,12 @@ export class LiveMonitorController extends Controller {
   ];
 
   private capturerEvt?: CapturerUpdateEvt;
-  private disposeList: (() => void)[] = [];
 
-  async init() {
-    const update = (evt: CapturerUpdateEvt) => {
-      this.capturerEvt = evt;
-    };
+  constructor(app: IApplication) {
+    super(app);
 
+    const update = (evt: CapturerUpdateEvt) => (this.capturerEvt = evt);
     this.app.on(CapturerUpdateEvt, update);
-    this.disposeList.push(() => this.app.off(CapturerUpdateEvt, update));
   }
 
   async getSnapshot(ctx: IContext) {

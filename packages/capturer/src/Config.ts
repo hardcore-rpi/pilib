@@ -1,10 +1,10 @@
-import { Config } from 'ah-server';
+import { BaseConfig } from 'ah-server';
 
 declare module 'ah-server' {
   interface IConfig extends CapturerConfig {}
 }
 
-export class CapturerConfig extends Config {
+export class CapturerConfig extends BaseConfig {
   readonly LOCAL_PORT: number = +(process.env.LOCAL_PORT || 10001);
 
   // 相机配置

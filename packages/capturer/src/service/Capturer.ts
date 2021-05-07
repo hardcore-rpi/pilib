@@ -1,4 +1,4 @@
-import { Service } from 'ah-server';
+import { BaseService } from 'ah-server';
 import { Detector } from '../Detector';
 import { CapturerUpdateEvt } from '../Event';
 
@@ -9,7 +9,7 @@ declare module 'ah-server' {
 }
 
 /** 人脸捕捉服务 */
-export class Capturer extends Service {
+export class Capturer extends BaseService {
   private lastFaceCnt = 0;
   private lastValue = 0;
 

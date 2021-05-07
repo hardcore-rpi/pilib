@@ -16,12 +16,14 @@
     "install": "node ./install/opencv.js"
   },
   "dependencies": {
-    "ah-server": "^2.0.11",
+    "ah-server": "^3.5.0",
     "dayjs": "^1.9.4",
-    "fast-memoize": "^2.5.2",
+    "dotenv": "^9.0.0",
+    "lodash": "^4.17.21",
     "tslib": "^2.0.3"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.168",
     "@types/node": "^14.11.10",
     "ah-workflow": "^1.0.5",
     "nodemon": "^2.0.5",

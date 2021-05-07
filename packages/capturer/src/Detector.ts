@@ -1,5 +1,5 @@
 import * as cv from 'opencv4nodejs';
-import memoize from 'fast-memoize';
+import { memoize } from 'lodash';
 import { Snapshot } from './Snapshot';
 
 export class Detector {

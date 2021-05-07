@@ -1,6 +1,6 @@
 import * as cv from 'opencv4nodejs';
-import dayjs from 'dayjs';
-import memoize from 'fast-memoize';
+import * as dayjs from 'dayjs';
+import { memoize } from 'lodash';
 
 export class Snapshot {
   constructor(

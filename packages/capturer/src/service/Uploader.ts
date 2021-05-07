@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Snapshot } from '../Snapshot';
-import { Service } from 'ah-server';
+import { BaseService } from 'ah-server';
 
 declare module 'ah-server' {
   interface IService {
@@ -9,7 +9,7 @@ declare module 'ah-server' {
   }
 }
 
-export class Uploader extends Service {
+export class Uploader extends BaseService {
   private get endpoint() {
     return this.config.UPLOAD_ENDPOINT;
   }

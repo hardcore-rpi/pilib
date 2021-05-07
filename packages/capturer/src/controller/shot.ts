@@ -1,38 +1,36 @@
-import { Controller, IContext, IControllerMapperItem } from 'ah-server';
+import { BaseController, IApplication, IContext, IRouterMeta } from 'ah-server';
 import { CapturerUpdateEvt } from '../Event';
 
 /** 触发拍照 */
-export class ShotController extends Controller {
-  mapper: IControllerMapperItem[] = [
+export class ShotController extends BaseController {
+  mapper: IRouterMeta[] = [
     {
       path: '/shot',
       method: 'GET',
       handler: this.shot,
+      query: {
+        schema: {
+          type: 'object',
+          properties: {
+            upload: { type: 'string' },
+            detect: { type: 'string' },
+          },
+        },
+      },
     },
   ];
 
   private capturerEvt?: CapturerUpdateEvt;
-  private disposeList: (() => void)[] = [];
 
-  async init() {
-    const update = (evt: CapturerUpdateEvt) => {
-      this.capturerEvt = evt;
-    };
+  constructor(app: IApplication) {
+    super(app);
 
+    const update = (evt: CapturerUpdateEvt) => (this.capturerEvt = evt);
     this.app.on(CapturerUpdateEvt, update);
-    this.disposeList.push(() => this.app.off(CapturerUpdateEvt, update));
   }
 
-  async shot(ctx: IContext) {
+  async shot(ctx: IContext, query: { upload?: string; detect?: string }) {
     if (!this.capturerEvt) return;
-
-    const query = ctx.validate<{ upload?: string; detect?: string }>(ctx.request.query, {
-      type: 'object',
-      properties: {
-        upload: { type: 'string' },
-        detect: { type: 'string' },
-      },
-    });
 
     let snapshot = this.capturerEvt.snapshot;
 
